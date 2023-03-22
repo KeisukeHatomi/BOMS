@@ -17,6 +17,7 @@ function CreateNewPart() {
     const [partCode, setPartCode] = useState('')
     const [partName, setPartName] = useState('')
     const [partRev, setPartRev] = useState('')
+    const { user } = useAuthContext();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -79,57 +80,61 @@ function CreateNewPart() {
         }
     }
 
-    return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <Box
-                    sx={{ '& > :not(style)': { m: 1, width: '25ch' }, }}
-                    noValidate
-                    autoComplete="off"
-                >
-                    <TextField
-                        required
-                        error={error}
-                        variant="standard"
-                        id="code"
-                        name="code"
-                        label="Code"
-                        style={{ width: 200 }}
-                        autoComplete='off'
-                        onChange={onChangeCode}
-                        onFocus={onFocus}
-                        value={partCode}
-                        helperText={error && message}
-                    />
-                    <TextField
-                        required
-                        variant="standard"
-                        id="name"
-                        name="name"
-                        label="Name"
-                        style={{ width: 300 }}
-                        onChange={onChangeCode}
-                        onFocus={onFocus}
-                        value={partName}
-                    />
-                    <TextField
-                        required
-                        variant="standard"
-                        id="rev"
-                        name="rev"
-                        label="Revision"
-                        style={{ width: 100 }}
-                        onChange={onChangeCode}
-                        onFocus={onFocus}
-                        value={partRev}
-                    />
-                </Box>
-                {message ? (<p style={{ color: 'red' }}>{message}</p>) : (<p>&nbsp;</p>)}
-                <Button type="submit" variant="contained" >登録</Button>
-            </form>
-            <Button variant="contained" sx={{ margin: '10px' }} href="/">ホーム</Button>
-        </div>
-    )
+    if (!user) {
+        return <Navigate replace to="/login" />;
+    } else {
+        return (
+            <div>
+                <form onSubmit={handleSubmit}>
+                    <Box
+                        sx={{ '& > :not(style)': { m: 1, width: '25ch' }, }}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <TextField
+                            required
+                            error={error}
+                            variant="standard"
+                            id="code"
+                            name="code"
+                            label="Code"
+                            style={{ width: 200 }}
+                            autoComplete='off'
+                            onChange={onChangeCode}
+                            onFocus={onFocus}
+                            value={partCode}
+                            helperText={error && message}
+                        />
+                        <TextField
+                            required
+                            variant="standard"
+                            id="name"
+                            name="name"
+                            label="Name"
+                            style={{ width: 300 }}
+                            onChange={onChangeCode}
+                            onFocus={onFocus}
+                            value={partName}
+                        />
+                        <TextField
+                            required
+                            variant="standard"
+                            id="rev"
+                            name="rev"
+                            label="Revision"
+                            style={{ width: 100 }}
+                            onChange={onChangeCode}
+                            onFocus={onFocus}
+                            value={partRev}
+                        />
+                    </Box>
+                    {message ? (<p style={{ color: 'red' }}>{message}</p>) : (<p>&nbsp;</p>)}
+                    <Button type="submit" variant="contained" >登録</Button>
+                </form>
+                <Button variant="contained" sx={{ margin: '10px' }} href="/">ホーム</Button>
+            </div>
+        )
+    }
 }
 
 export default CreateNewPart

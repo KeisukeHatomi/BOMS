@@ -12,10 +12,6 @@ function MasterPatrsList() {
   const [masterParts, setMasterParts] = useState([]);
   const { user } = useAuthContext();
 
-  console.log(user)
-  console.log(user.email)
-  console.log(user.photoURL)
-
   useEffect(() => {
     getDocs(collection(db, Collection))
       .then((res) => {
