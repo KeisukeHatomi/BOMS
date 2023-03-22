@@ -125,7 +125,7 @@ function CreateNewPart() {
                     />
                 </Box>
                 {message ? (<p style={{ color: 'red' }}>{message}</p>) : (<p>&nbsp;</p>)}
-                <Button type="submit" variant="contained" >追加</Button>
+                <Button type="submit" variant="contained" >登録</Button>
             </form>
             <Button variant="contained" sx={{ margin: '10px' }} href="/">ホーム</Button>
         </div>

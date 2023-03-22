@@ -8,6 +8,7 @@ const Home = lazy(() => import('./components/Home'));
 const Login = lazy(() => import('./components/Login'));
 const MasterPartsList = lazy(() => import('./components/MasterPartsList'));
 const CreateNewPart = lazy(() => import('./components/CreateNewPart'));
+const UserProfile = lazy(()=> import('./components/UserProfile'));
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/masterpartslist" element={<MasterPartsList />} />
             <Route path="/createnewpart" element={<CreateNewPart />} />
+            <Route path="/userprofile" element={<UserProfile />} />
           </Routes>
         </AuthProvider>
       </Suspense>
