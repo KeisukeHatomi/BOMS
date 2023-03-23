@@ -17,12 +17,12 @@ const SignUp = () => {
             .then((userCredential) => {
                 const user = userCredential.user;
                 console.log(user);
-                navigation("/");
+                navigation("/userprofile");
             })
             .catch((err) => {
                 setError(err.message);
                 console.log(err);
-            })
+            });
     };
 
     return (
@@ -53,7 +53,7 @@ const SignUp = () => {
                     />
                 </div>
                 <div>
-                    <Button type="submit" variant="contained" sx={{ margin: '20px' }}>登録</Button>
+                    <Button type="submit" variant="contained" sx={{ margin: '20px' }}>次へ</Button>
                 </div>
             </form>
         </div>

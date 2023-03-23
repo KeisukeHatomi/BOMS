@@ -19,7 +19,10 @@ function UserProfile() {
     const [message, setMessage] = useState('');
     const [lastName, setLastName] = useState('');
     const [firstName, setFirstName] = useState('');
-    const [error, setError] = useState('');
+    const [isResisted, setIsResisted] = useState(true);
+    const navigation = useNavigate();
+
+    const wait = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     useEffect(() => {
         if (user) {
@@ -29,8 +32,7 @@ function UserProfile() {
                     setFirstName(data.firstName)
                     setPurpose(data.purpose)
                 } else {
-                    setMessage("ユーザが新規登録されていません");
-                    setError(true)
+                    setIsResisted(false)
                 }
             });
         }
@@ -47,9 +49,14 @@ function UserProfile() {
 
         try {
             setData(user.email, userProfile)
-                .then(() => {
-
-                    setMessage("登録しました");
+                .then(async () => {
+                    if (isResisted) {
+                        setMessage("更新しました。");
+                    } else {
+                        setMessage("ご登録ありがとうございます。");
+                    }
+                    await wait(2000);
+                    navigation("/");
                 });
         } catch (e) {
             setMessage(e);
@@ -87,8 +94,6 @@ function UserProfile() {
         return (
             <div>
                 <form onSubmit={handleSubmit}>
-                    {message ? (<div>{message}</div>) : (<div>&nbsp;</div>)}
-
                     <div>
                         <TextField
                             sx={{ width: '300px', m: 1 }}
@@ -150,8 +155,18 @@ function UserProfile() {
                             </Select>
                         </FormControl>
                     </div>
-                    <Button type="submit" variant="contained" >更新</Button>
-                    <Button variant="contained" sx={{ margin: '10px' }} href="/">ホーム</Button>
+                    {isResisted ? (
+                        <div>
+                            <Button type="submit" variant="contained" >更新</Button>
+                            <Button variant="contained" sx={{ margin: '10px' }} href="/">キャンセル</Button>
+                        </div>
+                    ) : (
+                        <div>
+                            <Button type="submit" variant="contained" >登録</Button>
+                        </div>
+                    )}
+                    {message ? (<div>{message}</div>) : (<div>&nbsp;</div>)}
+
                 </form>
             </div>
         )
