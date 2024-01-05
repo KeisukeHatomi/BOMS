@@ -11,15 +11,15 @@ const Home = () => {
         auth.signOut().then(() => navigation('/login'));
     };
 
-    const handleMasterParts=()=>{
+    const handleMasterParts = () => {
         navigation('/masterpartslist'); // Dynamic import によるroutes の場合、ref="/***"では、本番環境でnot foundになってしまう
     }
 
-    const handleCreatePart=()=>{
+    const handleCreatePart = () => {
         navigation('/createnewpart'); // Dynamic import によるroutes の場合、ref="/***"では、本番環境でnot foundになってしまう
     }
 
-    const handleProfile=()=>{
+    const handleProfile = () => {
         navigation('/userprofile');
     }
 
@@ -31,10 +31,14 @@ const Home = () => {
                 <p> {user.email}</p>
                 <div>
                     <Button variant="contained" onClick={handleMasterParts} sx={{ marginTop: '10px' }}>マスター部品一覧</Button>
+                </div>
+                <div>
                     <Button variant="contained" onClick={handleCreatePart} sx={{ marginTop: '10px' }}>部品登録</Button>
                 </div>
                 <div>
                     <Button variant="contained" onClick={handleProfile} sx={{ marginTop: '10px' }}>ユーザプロファイル</Button>
+                </div>
+                <div>
                     <Button variant="contained" onClick={handleLogout} sx={{ marginTop: '10px' }}>ログアウト</Button>
                 </div>
             </div>
