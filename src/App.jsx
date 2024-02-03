@@ -9,25 +9,28 @@ const Login = lazy(() => import('./components/Login'));
 const MasterPartsList = lazy(() => import('./components/MasterPartsList'));
 const CreateNewPart = lazy(() => import('./components/CreateNewPart'));
 const UserProfile = lazy(()=> import('./components/UserProfile'));
+const PartDetail = lazy(()=> import('./components/partDetail'))
+
 
 function App() {
 
   return (
-    <div className="App">
-      <Suspense fallback={<div>Loading...</div>}>
-        <AuthProvider>
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/masterpartslist" element={<MasterPartsList />} />
-            <Route path="/createnewpart" element={<CreateNewPart />} />
-            <Route path="/userprofile" element={<UserProfile />} />
-          </Routes>
-        </AuthProvider>
-      </Suspense>
-    </div>
-  )
+		<div className="App">
+			<Suspense fallback={<div>Loading...</div>}>
+				<AuthProvider>
+					<Routes>
+						<Route exact path="/" element={<Home />} />
+						<Route path="/signup" element={<SignUp />} />
+						<Route path="/login" element={<Login />} />
+						<Route path="/masterpartslist" element={<MasterPartsList />} />
+						<Route path="/createnewpart" element={<CreateNewPart />} />
+						<Route path="/userprofile" element={<UserProfile />} />
+						<Route path="/partDetail/:id" element={<PartDetail />} />
+					</Routes>
+				</AuthProvider>
+			</Suspense>
+		</div>
+  );
 }
 
 export default App
