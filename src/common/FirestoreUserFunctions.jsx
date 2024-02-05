@@ -20,8 +20,6 @@ const COMPANY = 'COMPANY';
 
 export const setField = async (company, prop) => {
 	const companyId = await getComanyId(company);
-	console.log('prop🔵 ', prop);
-	console.log('companyId🔵 ', companyId);
 	await setDoc(doc(db, COMPANY, companyId), prop, { merge: true });
 };
 
@@ -70,6 +68,16 @@ export const setPart = async (company, field, code, prop) => {
 	const companyId = await getComanyId(company);
 	await setDoc(doc(db, COMPANY, companyId, field, code), prop);
 };
+/**
+ * 品番情報を更新する
+ * @param {*} company
+ * @param {*} code
+ * @param {*} prop
+ */
+export const updatePart = async (company, field, code, prop) => {
+	const companyId = await getComanyId(company);
+	await setDoc(doc(db, COMPANY, companyId, field, code), prop, { merge: true });
+};
 
 /**
  *品番カテゴリーを取得する
@@ -107,6 +115,21 @@ export const setDrawingUrl = async (company, field, code, url) => {
 	const companyId = await getComanyId(company);
 	const prop = {
 		drawingUrl:url,
+	};
+	await setDoc(doc(db, COMPANY, companyId, field, code), prop, { merge: true });
+};
+
+/**
+ * Strageに保存した図面urlを書き込む
+ * @param {*} company 
+ * @param {*} field 
+ * @param {*} code 
+ * @param {*} url 
+ */
+export const setModelDataUrl = async (company, field, code, url) => {
+	const companyId = await getComanyId(company);
+	const prop = {
+		modelDataUrl: url,
 	};
 	await setDoc(doc(db, COMPANY, companyId, field, code), prop, { merge: true });
 };

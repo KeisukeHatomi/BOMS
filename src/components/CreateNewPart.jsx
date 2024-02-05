@@ -46,6 +46,7 @@ function CreateNewPart() {
 	const [method, setMethod] = useState('');
 	const [usedInAssy, setUsedInAsssy] = useState([]);
 	const [revision, setRevision] = useState(1);
+	const [notes, setNotes] = useState('');
 	const { user } = useAuthContext();
 	const [selectCategory, setSelectCategory] = useState('');
 	const [partCategory, setPartCategory] = useState(part_category_array);
@@ -74,6 +75,7 @@ function CreateNewPart() {
 			partName: partName,
 			revision: revision,
 			usedInAssy: usedInAssy,
+			notes: notes,
 		};
 
 		fb.getPart(COMPANY, header.field, newCode.value).then((data) => {
@@ -101,6 +103,11 @@ function CreateNewPart() {
 		const item = e.target.value;
 		setSelectCategory(item);
 	};
+
+	const onChangeCodeName=(e)=>{
+		const item = e.target.value.toUpperCase();
+		setPartName(item);
+	}
 
 	const createCodeNumber = async (head) => {
 		const res = await fb.getCategory(COMPANY);
@@ -159,7 +166,7 @@ function CreateNewPart() {
 								id="name"
 								name="name"
 								label="品名"
-								onChange={onChangeCode}
+								onChange={onChangeCodeName}
 								value={partName}
 								sx={{ textAlign: 'left', m: 1 }}
 							/>

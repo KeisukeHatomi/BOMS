@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import * as fb from '../common/FirestoreUserFunctions';
-import { db } from '../firebase';
-import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
-import { useAuthContext } from '../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
+
+import { useAuthContext } from '../context/AuthContext';
+import { PropContext } from '../context/PropContext';
+
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
@@ -15,7 +16,6 @@ import SearchIcon from '@mui/icons-material/Search';
 
 const muiDataGridPageSize = 20;
 
-const Collection = 'part';
 const COMPANY = 'MUSE';
 
 const columns = [
@@ -37,7 +37,7 @@ const columns = [
 		align: 'center',
 		sortable: true,
 		editable: true,
-		width: 120,
+		width: 250,
 	},
 	{
 		field: 'revision',
@@ -87,17 +87,17 @@ const columns = [
 function MasterPatrsList() {
 	const navigation = useNavigate();
 
-	const [masterParts, setMasterParts] = useState([]);
 	const { user } = useAuthContext();
+	const { companyId, currentCategory, setCurrentCategory } = useContext(PropContext);
+
 	const [rows, setRows] = useState([]);
 	const [nameKeyWord, setNameKeyWord] = useState('');
 	const [codeKeyWord, setCodeKeyWord] = useState('');
 	const [partCategory, setPartCategory] = useState([]);
-	const [selectCategory, setSelectCategory] = useState('');
 	const allParts = useRef([]);
 
 	const handleChangeNameKey = (e) => {
-		const item = e.target.value;
+		const item = e.target.value.toUpperCase();
 		setNameKeyWord(item);
 
 		const res = allParts.current.filter((part) => {
@@ -107,7 +107,7 @@ function MasterPatrsList() {
 	};
 
 	const handleChangeCodeKey = (e) => {
-		const item = e.target.value;
+		const item = e.target.value.toUpperCase();
 		setCodeKeyWord(item);
 
 		const res = allParts.current.filter((part) => {
@@ -118,7 +118,7 @@ function MasterPatrsList() {
 
 	const handleChangeSelect = (e) => {
 		const item = e.target.value;
-		setSelectCategory(item);
+		setCurrentCategory(item);
 
 		const header = partCategory.find((e) => e.category === item);
 		fb.getAllParts(COMPANY, header.field).then((item) => {
@@ -145,7 +145,6 @@ function MasterPatrsList() {
 	};
 
 	const handleRowClick = (params) => {
-		const header = partCategory.find((e) => e.category === selectCategory);
 		navigation(`/partDetail/${params.id}`, { state: { row: params.row } });
 	};
 
@@ -160,6 +159,17 @@ function MasterPatrsList() {
 				};
 			});
 			setPartCategory(item_array);
+
+			if (currentCategory) {
+				const header = item_array.find((e) => e.category === currentCategory);
+				fb.getAllParts(COMPANY, header.field).then((item) => {
+					allParts.current = item.map((e) => {
+						const crDate = e.createdDate.toDate();
+						const upDate = e.updateDate.toDate();
+						return { field: header.field, createdNewDate: crDate, updateNewDate: upDate, ...e };
+					});
+				});
+			}
 		});
 	}, []);
 
@@ -177,7 +187,7 @@ function MasterPatrsList() {
 						p: 0,
 						mt: 1,
 						width: 340,
-						border: 1,
+						border: 'none',
 						borderRadius: 2,
 					}}
 				>
@@ -189,7 +199,7 @@ function MasterPatrsList() {
 							required
 							labelId="select-category"
 							id="categorySelect"
-							value={selectCategory}
+							value={currentCategory}
 							label="Item"
 							onChange={handleChangeSelect}
 							sx={{ textAlign: 'left', ml: 1, width: '100%' }}
