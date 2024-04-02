@@ -91,14 +91,20 @@ function StepFileUpload(props) {
 				setStepUploading(false);
 			});
 	};
-	const { getRootProps, getInputProps } = useDropzone({
+
+	const handleClick = (e) => {
+		console.log('e🔵 ', e);
+	};
+
+	const handleDelete = () => {
+		console.log('🔵');
+	};
+
+	const { getRootProps, getInputProps, open } = useDropzone({
 		onDrop,
+		noClick: true, // クリック時ファイルダイアログを開かせない
 		multiple: false, // 複数ファイルのアップロードを禁止
 	});
-
-	const handleDelete=()=>{
-		console.log('🔵' );
-	}
 
 	useEffect(() => {
 		fb.getComanyId('MUSE').then((item) => {
@@ -113,7 +119,6 @@ function StepFileUpload(props) {
 					const arrayBuffer = await response.arrayBuffer();
 					setFile(arrayBuffer);
 					setIsLoaded(true);
-
 				} catch (error) {
 					console.error('Error downloading file:', error);
 				}
@@ -146,55 +151,68 @@ function StepFileUpload(props) {
 					<CircularProgress />
 				) : (
 					<>
-						{previewStepUrl && (
-							<Box height={580} mb={1}>
-								<Canvas
-									shadows
-									raycaster={{ params: { Line: { threshold: 0.15 } } }}
-									camera={{ position: [-10, 10, 10], fov: 20 }}
-								>
-									<ambientLight intensity={0.2} />
-									<directionalLight position={[0, -50, 0]} />
-									<directionalLight
-										castShadow
-										position={[2.5, 5, 5]}
-										intensity={1.0}
-										shadow-mapSize={[1024, 1024]}
+						{previewStepUrl ? (
+							<Box>
+								<Box mb={1} height={580}>
+									<Canvas
+										shadows
+										raycaster={{ params: { Line: { threshold: 0.15 } } }}
+										camera={{ position: [-10, 10, 10], fov: 20 }}
 									>
-										<orthographicCamera attach="shadow-camera" args={[-5, 5, 5, -5, 1, 50]} />
-									</directionalLight>
-									{/* <Ground /> */}
-									{isLoaded && <StepModel scale={[0.1, 0.1, 0.1]} data={file} />}
-									<OrbitControls dampingFactor={0.2} enableDamping={true} />
-								</Canvas>
+										<ambientLight intensity={0.2} />
+										<directionalLight position={[0, -50, 0]} />
+										<directionalLight
+											castShadow
+											position={[2.5, 5, 5]}
+											intensity={1.0}
+											shadow-mapSize={[1024, 1024]}
+										>
+											<orthographicCamera attach="shadow-camera" args={[-5, 5, 5, -5, 1, 50]} />
+										</directionalLight>
+										{/* <Ground /> */}
+										{isLoaded && <StepModel scale={[0.1, 0.1, 0.1]} data={file} />}
+										<OrbitControls dampingFactor={0.2} enableDamping={true} />
+									</Canvas>
+								</Box>
+								<Box>
+									<Button
+										startIcon={<CloudSyncIcon />}
+										type="file"
+										variant="contained"
+										component="span"
+										sx={{ mr: 1 }}
+										onClick={open}
+									>
+										3Dモデル(STEP)の差し替え
+									</Button>
+									<Button
+										startIcon={<DeleteForeverIcon />}
+										variant="contained"
+										component="span"
+										onClick={handleDelete}
+									>
+										削除
+									</Button>
+								</Box>
+							</Box>
+						) : (
+							<Box mb={3}>
+								<Typography variant="body2">
+									3Dモデル(STEP)ファイルをドラッグ&ドロップ、または
+								</Typography>
+								<Button
+									startIcon={<CloudUploadIcon />}
+									variant="contained"
+									component="span"
+									onClick={open}
+								>
+									3Dモデル(STEP)を選択
+								</Button>
 							</Box>
 						)}
-						<Typography variant="body2">3Dモデル(STEP)ファイルをドラッグ&ドロップ、または</Typography>
 					</>
 				)}
 			</Box>
-
-			{previewStepUrl ? (
-				<Box mb={3}>
-					<Button startIcon={<CloudSyncIcon />} variant="contained" component="span" sx={{ mr: 1 }}>
-						3Dモデル(STEP)の差し替え
-					</Button>
-					<Button
-						startIcon={<DeleteForeverIcon />}
-						variant="contained"
-						component="span"
-						onClick={handleDelete}
-					>
-						削除
-					</Button>
-				</Box>
-			) : (
-				<Box mb={3}>
-					<Button startIcon={<CloudUploadIcon />} variant="contained" component="span">
-						3Dモデル(STEP)を選択
-					</Button>
-				</Box>
-			)}
 		</Box>
 	);
 }

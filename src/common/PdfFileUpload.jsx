@@ -38,8 +38,9 @@ function PdfFileUpload(props) {
 				setPdfUploading(false);
 			});
 	};
-	const { getRootProps, getInputProps } = useDropzone({
+	const { getRootProps, getInputProps, open } = useDropzone({
 		onDrop,
+		noClick:true,
 		multiple: false, // 複数ファイルのアップロードを禁止
 	});
 
@@ -72,32 +73,41 @@ function PdfFileUpload(props) {
 					<CircularProgress />
 				) : (
 					<>
-						{previewPdfUrl && (
-							<object data={previewPdfUrl} type="application/pdf" width="100%" height="870px">
-								図面プレビューが表示されない場合は、<a href={previewPdfUrl}>こちら</a>
-								をクリックしてください。
-							</object>
+						{previewPdfUrl ? (
+							<Box mb={1}>
+								<object data={previewPdfUrl} type="application/pdf" width="100%" height="870px">
+									図面プレビューが表示されない場合は、<a href={previewPdfUrl}>こちら</a>
+									をクリックしてください。
+								</object>
+								<Button
+									startIcon={<CloudSyncIcon />}
+									variant="contained"
+									component="span"
+									sx={{ mr: 1 }}
+									onClick={open}
+								>
+									図面の差し替え
+								</Button>
+								<Button startIcon={<DeleteForeverIcon />} variant="contained" component="span">
+									削除
+								</Button>
+							</Box>
+						) : (
+							<Box mb={1}>
+								<Typography variant="body2">図面(PDF)ファイルをドラッグ&ドロップ、または</Typography>
+								<Button
+									startIcon={<CloudUploadIcon />}
+									variant="contained"
+									component="span"
+									onClick={open}
+								>
+									図面(PDF)を選択
+								</Button>
+							</Box>
 						)}
-						<Typography variant="body2">図面(PDF)ファイルをドラッグ&ドロップ、または</Typography>
 					</>
 				)}
 			</Box>
-			{previewPdfUrl ? (
-				<Box mb={3}>
-					<Button startIcon={<CloudSyncIcon />} variant="contained" component="span" sx={{ mr: 1 }}>
-						図面の差し替え
-					</Button>
-					<Button startIcon={<DeleteForeverIcon />} variant="contained" component="span">
-						削除
-					</Button>
-				</Box>
-			) : (
-				<Box mb={3}>
-					<Button startIcon={<CloudUploadIcon />} variant="contained" component="span">
-						図面(PDF)を選択
-					</Button>
-				</Box>
-			)}
 		</Box>
 	);
 }

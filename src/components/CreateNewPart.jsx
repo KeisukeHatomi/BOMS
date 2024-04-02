@@ -63,6 +63,7 @@ function CreateNewPart() {
 
 		const header = partCategory.find((e) => e.category === selectCategory);
 		const newCode = await createCodeNumber(header);
+		console.log('newCode🔵 ', newCode);
 		setPartCode(newCode.value);
 
 		const partProp = {

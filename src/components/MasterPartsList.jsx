@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 const muiDataGridPageSize = 20;
 
@@ -47,8 +48,80 @@ const columns = [
 		align: 'center',
 		sortable: true,
 		editable: true,
-		width: 120,
+		width: 60,
 		type: 'number',
+	},
+	{
+		field: 'method',
+		headerName: '工法',
+		headerClassName: 'header',
+		headerAlign: 'center',
+		align: 'center',
+		sortable: true,
+		editable: true,
+		width: 150,
+	},
+	{
+		headerClassName: 'header',
+		field: 'drawingUrl',
+		headerName: '図面',
+		width: 80,
+		headerAlign: 'center',
+		align: 'center',
+		renderCell: (params) => {
+			const hasValue = params.row.drawingUrl !== '';
+			return (
+				<>
+					{hasValue && (
+						<>
+							{/* アイコンを表示 */}
+							<CloudDownloadIcon
+								onClick={() => {
+									alert('Edit ' + params.id);
+								}}
+								style={{ cursor: 'pointer', marginRight: '10px' }}
+							/>
+						</>
+					)}
+				</>
+			);
+		},
+	},
+	{
+		headerClassName: 'header',
+		field: 'modelDataUrl',
+		headerName: '3Dモデル',
+		width: 80,
+		headerAlign: 'center',
+		align: 'center',
+		renderCell: (params) => {
+			const hasValue = params.row.modelDataUrl !== '';
+			return (
+				<>
+					{hasValue && (
+						<>
+							{/* アイコンを表示 */}
+							<CloudDownloadIcon
+								onClick={() => {
+									alert('Edit ' + params.id);
+								}}
+								style={{ cursor: 'pointer', marginRight: '10px' }}
+							/>
+						</>
+					)}
+				</>
+			);
+		},
+	},
+	{
+		field: 'createdUser',
+		headerName: '担当者',
+		headerClassName: 'header',
+		headerAlign: 'center',
+		align: 'center',
+		sortable: true,
+		editable: false,
+		width: 120,
 	},
 	{
 		field: 'updateNewDate',
@@ -71,16 +144,6 @@ const columns = [
 		editable: false,
 		width: 120,
 		type: 'date',
-	},
-	{
-		field: 'createdUser',
-		headerName: '担当者',
-		headerClassName: 'header',
-		headerAlign: 'center',
-		align: 'center',
-		sortable: true,
-		editable: false,
-		width: 120,
 	},
 ];
 
