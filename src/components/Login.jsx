@@ -17,7 +17,12 @@ const Login = () => {
         signInWithEmailAndPassword(auth, email.value, password.value)
             .then((userCredential) => {
                 const user = userCredential.user;
-                navigation('/');
+                console.log(user)
+                if(user.displayName === null){
+                    navigation('/userprofile');
+                }else{
+                    navigation('/');
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -79,10 +84,10 @@ const Login = () => {
                 </div>
             </form>
             <div>
-                <hr style={{marginTop:'10px', content:'OR'}} />
+                {/* <hr style={{marginTop:'10px', content:'OR'}} /> */}
             </div>
             <div>
-                <Button variant="contained" sx={{margin:'20px'}} onClick={handleGoogleLogin}>Googleアカウントでログイン</Button>
+                {/* <Button variant="contained" sx={{margin:'20px'}} onClick={handleGoogleLogin}>Googleアカウントでログイン</Button> */}
             </div>
 
         </div>

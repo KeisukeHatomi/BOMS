@@ -198,6 +198,7 @@ function MasterPatrsList() {
 			return part.partName.includes(nameKeyWord);
 		});
 		setRows(res);
+		console.log('res🔵 ', user);
 	};
 
 	const handleCodeSerch = (e) => {

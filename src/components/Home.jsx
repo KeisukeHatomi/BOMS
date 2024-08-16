@@ -27,10 +27,15 @@ const Home = () => {
 		navigation('/userprofile');
 	};
 
+	const handleUpdatePassword=()=>{
+		navigation('/updatepassword');
+
+	}
+
 	useEffect(() => {
 		fb.getComanyId('MUSE').then((e) => {
 			setCompanyId(e);
-            console.log('e🔵 ', e);
+            console.log('Company Name🔵 ', e);
 		});
 	}, []);
 
@@ -47,7 +52,7 @@ const Home = () => {
 				</div>
 				<div>
 					<Button variant="contained" onClick={handleCreatePart} sx={{ marginTop: '10px' }}>
-						部品登録
+						マスター部品登録
 					</Button>
 				</div>
 				<div>
@@ -55,6 +60,9 @@ const Home = () => {
 						ユーザプロファイル
 					</Button>
 				</div>
+				<Button variant="contained" onClick={handleUpdatePassword} sx={{ marginTop: '10px' }}>
+					パスワードの変更
+				</Button>
 				<div>
 					<Button variant="contained" onClick={handleLogout} sx={{ marginTop: '10px' }}>
 						ログアウト

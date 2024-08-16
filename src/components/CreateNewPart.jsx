@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import * as fb from '../common/FirestoreUserFunctions';
-import CommonDialog, { ButtonType } from '../common/Dialog';
+import DlgComfirm from '../common/DlgComfirmResistNerPart';
 
 import { Navigate, useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
@@ -52,12 +52,6 @@ function CreateNewPart() {
 	const [partCategory, setPartCategory] = useState(part_category_array);
 	const [digOpen, setDigOpen] = useState(false);
 
-	const handleTest = async (e) => {
-		const res = await fb.getComanyId(COMPANY);
-
-		await fb.setField(COMPANY, part_category);
-	};
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -69,7 +63,7 @@ function CreateNewPart() {
 		const partProp = {
 			createdDate: new Date(),
 			updateDate: new Date(),
-			createdUser: user.uid,
+			createdUser: user.displayName,
 			drawingUrl: '',
 			modelDataUrl: '',
 			method: method,
@@ -105,15 +99,16 @@ function CreateNewPart() {
 		setSelectCategory(item);
 	};
 
-	const onChangeCodeName=(e)=>{
+	const onChangeCodeName = (e) => {
 		const item = e.target.value.toUpperCase();
 		setPartName(item);
-	}
+	};
 
 	const createCodeNumber = async (head) => {
 		const res = await fb.getCategory(COMPANY);
 		// 対象ヘッドコードの最終番号を取得して新番を設定
 		const newVal = res[head.field].lastNumber + 1;
+		console.log('newVal🔵 ', newVal);
 		const code = {
 			value: head.headCode + newVal.toString().padStart(4, '0'),
 			number: newVal,
@@ -142,7 +137,7 @@ function CreateNewPart() {
 					flexDirection={'column'}
 					justifyContent={'center'}
 				>
-					<Box sx={{ fontSize: 'h4', fontWeight: 'bold' }}>部品登録</Box>
+					<Box sx={{ fontSize: 'h4', fontWeight: 'bold' }}>マスター部品登録</Box>
 					<form onSubmit={handleSubmit}>
 						<FormControl variant="standard" sx={{ width: 300 }}>
 							<InputLabel id="select-category">カテゴリ</InputLabel>
@@ -177,19 +172,18 @@ function CreateNewPart() {
 							<Button variant="contained" sx={{ m: 1 }} href="/">
 								ホーム
 							</Button>
-							<Button variant="contained" sx={{ m: 1 }} onClick={handleTest}>
-								test
-							</Button>
 						</FormControl>
 					</form>
 				</Box>
-				<CommonDialog
-					title="部品登録"
-					message={'品番 : ' + partCode + '\n' + '品名 : ' + partName}
-					buttonType={ButtonType.OkOnly}
+				<DlgComfirm
+					title="登録完了"
+					pCode = {partCode}
+					pName = {partName}
+					onAccept={() => {
+						setPartName('');
+					}}
+					onClose={()=>setDigOpen(false)}
 					open={digOpen}
-					onAccept={() => setPartName('')}
-					onClose={() => setDigOpen(false)}
 				/>
 			</div>
 		);

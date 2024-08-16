@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { updatePassword } from 'firebase/auth';
+import { useAuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../firebase';
 import { Button, InputAdornment, TextField } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-const SignUp = () => {
+function UpdatePassword() {
 	const navigation = useNavigate();
-	const [error, setError] = useState('');
+
+	const { user } = useAuthContext();
 
 	// パスワード表示制御用のstate
 	const [pass1Vis, setPass1Vis] = useState(false); // パスワード入力時のトグル
@@ -25,21 +27,16 @@ const SignUp = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const { email, password, comfirm } = e.target.elements;
+		const { password, comfirm } = e.target.elements;
 
 		if (password.value !== comfirm.value) {
 			alert('入力したパスワードが異なります。\n確認してください。');
 		} else {
 			try {
-				const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
-				const user = userCredential.user;
-				await sendEmailVerification(auth.currentUser);
-				alert(
-					'ご登録いただいたメールアドレスに確認用 URL を送信しました。\nメール本文内の URL をクリックして確認を済ませてください。'
-				);
+				await updatePassword(user, password.value);
+				alert('パスワードを変更しました。\n再度ログインしてください。');
 				auth.signOut().then(() => navigation('/login'));
 			} catch (e) {
-				setError(e.message);
 				console.log(e);
 			}
 		}
@@ -47,20 +44,8 @@ const SignUp = () => {
 
 	return (
 		<div>
-			<h1>ユーザ仮登録</h1>
-			{error && <p style={{ color: 'red' }}>{error}</p>}
+			<h1>新しいパスワードの登録</h1>
 			<form onSubmit={handleSubmit}>
-				<div>
-					<TextField
-						sx={{ width: '300px' }}
-						name="email"
-						id="standard-email-input"
-						label="E-mail"
-						type="email"
-						autoComplete="email"
-						variant="standard"
-					/>
-				</div>
 				<div>
 					<TextField
 						sx={{ width: '300px' }}
@@ -143,12 +128,12 @@ const SignUp = () => {
 				</div>
 				<div>
 					<Button type="submit" variant="contained" sx={{ margin: '20px' }}>
-						仮登録
+						パスワード変更
 					</Button>
 				</div>
 			</form>
 		</div>
 	);
-};
+}
 
-export default SignUp;
+export default UpdatePassword;
