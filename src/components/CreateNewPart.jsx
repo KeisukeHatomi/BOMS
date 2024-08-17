@@ -3,42 +3,14 @@ import { useAuthContext } from '../context/AuthContext';
 import * as fb from '../common/FirestoreUserFunctions';
 import DlgComfirm from '../common/DlgComfirmResistNerPart';
 
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-
-import CircularProgress from '@mui/material/CircularProgress';
+import HomeIcon from '@mui/icons-material/Home';
 
 const COMPANY = 'MUSE';
-
-const PART_CATEGORY = {
-	mecha: 'MECHA',
-	elec: 'ELEC',
-	harness: 'HARNESS',
-	assy: 'ASSY',
-	purchase: 'PURCHASE',
-};
-
-const part_category = {
-	category: {
-		[PART_CATEGORY.mecha]: { headCode: 'M', category: '機械部品', lastNumber: 0 },
-		[PART_CATEGORY.elec]: { headCode: 'E', category: '電気部品', lastNumber: 0 },
-		[PART_CATEGORY.harness]: { headCode: 'H', category: 'ハーネス部品', lastNumber: 0 },
-		[PART_CATEGORY.assy]: { headCode: 'A', category: '組立品', lastNumber: 0 },
-		[PART_CATEGORY.purchase]: { headCode: 'P', category: '購入品', lastNumber: 0 },
-	},
-};
-
-const part_category_array = Object.entries(part_category.category).map(([key, value]) => {
-	return {
-		field: key,
-		headCode: value.headCode,
-		category: value.category,
-		lastNumber: value.lastNumber,
-	};
-});
 
 function CreateNewPart() {
 	const [partName, setPartName] = useState('');
@@ -49,15 +21,17 @@ function CreateNewPart() {
 	const [notes, setNotes] = useState('');
 	const { user } = useAuthContext();
 	const [selectCategory, setSelectCategory] = useState('');
-	const [partCategory, setPartCategory] = useState(part_category_array);
+	const [partCategory, setPartCategory] = useState([]);
 	const [digOpen, setDigOpen] = useState(false);
+	const strageKey = {
+		Category: 'N_Category',
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		const header = partCategory.find((e) => e.category === selectCategory);
 		const newCode = await createCodeNumber(header);
-		console.log('newCode🔵 ', newCode);
 		setPartCode(newCode.value);
 
 		const partProp = {
@@ -82,21 +56,10 @@ function CreateNewPart() {
 		});
 	};
 
-	const onChangeCode = (e) => {
-		const id = e.target.id;
-		const val = e.target.value;
-		console.log('val🔵 ', val);
-		switch (id) {
-			case 'name':
-				setPartName(val);
-				break;
-			default:
-		}
-	};
-
 	const handleChange = (e) => {
 		const item = e.target.value;
 		setSelectCategory(item);
+		localStorage.setItem(strageKey.Category, item);
 	};
 
 	const onChangeCodeName = (e) => {
@@ -122,7 +85,23 @@ function CreateNewPart() {
 		return code;
 	};
 
-	useEffect(() => {}, []);
+	useEffect(() => {
+		fb.getCategory(COMPANY).then((item) => {
+			const item_array = Object.entries(item).map(([key, value]) => {
+				return {
+					field: key,
+					headCode: value.headCode,
+					category: value.category,
+					lastNumber: value.lastNumber,
+				};
+			});
+			setPartCategory(item_array);
+
+			const value = localStorage.getItem(strageKey.Category);
+			console.log('value🔵 ', value);
+			setSelectCategory(value);
+		});
+	}, []);
 
 	if (!user) {
 		return <Navigate replace to="/login" />;
@@ -150,7 +129,7 @@ function CreateNewPart() {
 								onChange={handleChange}
 								sx={{ textAlign: 'left', m: 1 }}
 							>
-								{part_category_array.map((item) => (
+								{partCategory.map((item) => (
 									<MenuItem key={item.field} value={item.category}>
 										{item.category}
 									</MenuItem>
@@ -169,7 +148,7 @@ function CreateNewPart() {
 							<Button type="submit" variant="contained" sx={{ m: 1 }}>
 								登録
 							</Button>
-							<Button variant="contained" sx={{ m: 1 }} href="/">
+							<Button startIcon={<HomeIcon />} variant="contained" sx={{ m: 1 }} href="/">
 								ホーム
 							</Button>
 						</FormControl>
@@ -177,12 +156,12 @@ function CreateNewPart() {
 				</Box>
 				<DlgComfirm
 					title="登録完了"
-					pCode = {partCode}
-					pName = {partName}
+					pCode={partCode}
+					pName={partName}
 					onAccept={() => {
 						setPartName('');
 					}}
-					onClose={()=>setDigOpen(false)}
+					onClose={() => setDigOpen(false)}
 					open={digOpen}
 				/>
 			</div>

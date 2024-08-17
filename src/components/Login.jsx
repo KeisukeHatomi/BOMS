@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, provider, } from '../firebase';
@@ -30,17 +30,17 @@ const Login = () => {
             });
     };
 
-    const handleGoogleLogin = () => {
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                const user = result.user;
-                navigation('/');
-            })
-            .catch((err) => {
-                console.log(err);
-                setError(err.message);
-            });
-    }
+    // const handleGoogleLogin = () => {
+    //     signInWithPopup(auth, provider)
+    //         .then((result) => {
+    //             const user = result.user;
+    //             navigation('/');
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //             setError(err.message);
+    //         });
+    // }
 
     const handleSignup=()=>{
         navigation('/signup');
