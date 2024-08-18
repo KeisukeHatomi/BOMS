@@ -18,8 +18,13 @@ import {
 
 const COMPANY = 'COMPANY';
 
+/**
+ * カテゴリーをセットする
+ * @param {*} company
+ * @param {*} prop
+ */
 export const setField = async (company, prop) => {
-	const companyId = await getComanyId(company);
+	const companyId = await getCompanyId(company);
 	await setDoc(doc(db, COMPANY, companyId), prop, { merge: true });
 };
 
@@ -28,7 +33,7 @@ export const setField = async (company, prop) => {
  * @param {*} company
  * @returns
  */
-export const getComanyId = async (company) => {
+export const getCompanyId = async (company) => {
 	const companiesRef = collection(db, COMPANY);
 	const q = query(companiesRef, where('companyName', '==', company));
 	const querySnapshot = await getDocs(q);
@@ -38,13 +43,12 @@ export const getComanyId = async (company) => {
 
 /**
  * 品番を指定して情報を取得
- * @param {*} company
+ * @param {*} companyId
  * @param {*} field
  * @param {*} code
  * @returns
  */
-export const getPart = async (company, field, code) => {
-	const companyId = await getComanyId(company);
+export const getPart = async (companyId, field, code) => {
 	const docSnap = await getDoc(doc(db, COMPANY, companyId, field, code));
 	let result = null;
 	if (docSnap.exists()) {
@@ -53,39 +57,42 @@ export const getPart = async (company, field, code) => {
 	return result;
 };
 
-export const getAllParts = async (company, field) => {
-	const companyId = await getComanyId(company);
+/**
+ * 指定カテゴリー（field）の全部品情報を取得する
+ * @param {*} companyId
+ * @param {*} field
+ * @returns
+ */
+export const getAllParts = async (companyId, field) => {
 	const docSnap = await getDocs(collection(db, COMPANY, companyId, field));
 	return docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 };
+
 /**
  * 品番情報を新設する
- * @param {*} company
+ * @param {*} companyId
  * @param {*} code
  * @param {*} prop
  */
-export const setPart = async (company, field, code, prop) => {
-	const companyId = await getComanyId(company);
+export const setPart = async (companyId, field, code, prop) => {
 	await setDoc(doc(db, COMPANY, companyId, field, code), prop);
 };
 /**
  * 品番情報を更新する
- * @param {*} company
+ * @param {*} companyId
  * @param {*} code
  * @param {*} prop
  */
-export const updatePart = async (company, field, code, prop) => {
-	const companyId = await getComanyId(company);
+export const updatePart = async (companyId, field, code, prop) => {
 	await setDoc(doc(db, COMPANY, companyId, field, code), prop, { merge: true });
 };
 
 /**
  *品番カテゴリーを取得する
- * @param {*} company
+ * @param {*} companyId
  * @returns
  */
-export const getCategory = async (company) => {
-	const companyId = await getComanyId(company);
+export const getCategory = async (companyId) => {
 	const docSnap = await getDoc(doc(db, COMPANY, companyId));
 	let result = null;
 	if (docSnap.exists()) {
@@ -95,43 +102,65 @@ export const getCategory = async (company) => {
 };
 
 /**
+ *品番クラスを取得する
+ * @param {*} companyId
+ * @returns
+ */
+export const getPartClass = async (companyId) => {
+	const docSnap = await getDoc(doc(db, COMPANY, companyId));
+	let result = null;
+	if (docSnap.exists()) {
+		result = docSnap.data();
+	}
+	return result.class;
+};
+
+/**
+ * 品番クラスを更新する
+ * @param {*} companyId
+ * @param {*} partClass
+ */
+export const updatePartClass = async (companyId, partClass) => {
+	console.log('partClass🔵 ', partClass);
+	const docSnap = doc(db, COMPANY, companyId);
+	await updateDoc(docSnap, {
+		class: arrayUnion(partClass),
+	});
+};
+
+/**
  * 品番カテゴリーを更新する
- * @param {*} company
+ * @param {*} companyId
  * @param {*} prop
  */
-export const updateCategory = async (company, prop) => {
-	const companyId = await getComanyId(company);
+export const updateCategory = async (companyId, prop) => {
 	await setDoc(doc(db, COMPANY, companyId), prop, { merge: true });
 };
 
 /**
- * Strageに保存した図面urlを書き込む
- * @param {*} company 
- * @param {*} field 
- * @param {*} code 
- * @param {*} url 
+ * Strageに保存したPDF urlを書き込む
+ * @param {*} companyId
+ * @param {*} field
+ * @param {*} code
+ * @param {*} url
  */
-export const setDrawingUrl = async (company, field, code, url) => {
-	const companyId = await getComanyId(company);
+export const setDrawingUrl = async (companyId, field, code, url) => {
 	const prop = {
-		drawingUrl:url,
+		drawingUrl: url,
 	};
 	await setDoc(doc(db, COMPANY, companyId, field, code), prop, { merge: true });
 };
 
 /**
- * Strageに保存した図面urlを書き込む
- * @param {*} company 
- * @param {*} field 
- * @param {*} code 
- * @param {*} url 
+ * Strageに保存したSTEP urlを書き込む
+ * @param {*} companyId
+ * @param {*} field
+ * @param {*} code
+ * @param {*} url
  */
-export const setModelDataUrl = async (company, field, code, url) => {
-	const companyId = await getComanyId(company);
+export const setModelDataUrl = async (companyId, field, code, url) => {
 	const prop = {
 		modelDataUrl: url,
 	};
 	await setDoc(doc(db, COMPANY, companyId, field, code), prop, { merge: true });
 };
-
-

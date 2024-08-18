@@ -52,7 +52,7 @@ const columns = [
 		type: 'number',
 	},
 	{
-		field: 'method',
+		field: 'partClass',
 		headerName: '工法',
 		headerClassName: 'header',
 		headerAlign: 'center',
@@ -219,7 +219,7 @@ function MasterPatrsList() {
 		setCurrentCategory(item);
 
 		const header = partCategory.find((elem) => elem.category === item);
-		fb.getAllParts(COMPANY, header.field).then((item) => {
+		fb.getAllParts(companyId, header.field).then((item) => {
 			allParts.current = item.map((elem) => {
 				const crDate = elem.createdDate.toDate();
 				const upDate = elem.updateDate.toDate();
@@ -278,7 +278,7 @@ function MasterPatrsList() {
 	};
 
 	useEffect(() => {
-		fb.getCategory(COMPANY).then((item) => {
+		fb.getCategory(companyId).then((item) => {
 			const item_array = Object.entries(item).map(([key, value]) => {
 				return {
 					field: key,
@@ -295,7 +295,7 @@ function MasterPatrsList() {
 			if (value) {
 				const header = item_array.find((elem) => elem.category === value);
 
-				fb.getAllParts(COMPANY, header.field)
+				fb.getAllParts(companyId, header.field)
 					.then((item) => {
 						allParts.current = item.map((elem) => {
 							const crDate = elem.createdDate.toDate();

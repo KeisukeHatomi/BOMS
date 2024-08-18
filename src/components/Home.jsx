@@ -31,8 +31,12 @@ const Home = () => {
 		navigation('/updatepassword');
 	};
 
+	const handleDbTest = () => {
+		navigation('/dbtest');
+	};
+
 	useEffect(() => {
-		fb.getComanyId('MUSE').then((e) => {
+		fb.getCompanyId('MUSE').then((e) => {
 			setCompanyId(e);
 			console.log('Company Name🔵 ', e);
 		});
@@ -62,6 +66,9 @@ const Home = () => {
 						<Button variant="contained" onClick={handleLogout} sx={{ marginTop: '10px' }}>
 							ログアウト
 						</Button>
+						{/* <Button variant="outlined" onClick={handleDbTest} sx={{ marginTop: '10px' }}>
+							データベーステスト
+						</Button> */}
 					</FormControl>
 				</Box>
 			</div>

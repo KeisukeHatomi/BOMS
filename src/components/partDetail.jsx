@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+import { PropContext } from '../context/PropContext';
 
 import PdfFileUpload from '../common/PdfFileUpload';
 import StepFileUpload from '../common/StepFileUpload';
@@ -15,11 +17,14 @@ import { format } from 'date-fns';
 
 function partDetail() {
 	const navigation = useNavigate();
+	const { user } = useAuthContext();
+	const { companyId } = useContext(PropContext);
 
 	const { id } = useParams();
 	const location = useLocation();
 	const { row } = location.state;
 
+	// pdf step アップロード用
 	const props = {
 		field: row.field,
 		partCode: id,
@@ -29,16 +34,19 @@ function partDetail() {
 		modelDataUrl: row.modelDataUrl,
 	};
 
-	const method = ['板金', '切削', '3Dプリント', '切削', 'シート'];
-
-	const [selectMethod, setSelectMethod] = useState(row.method);
+	const [selectPartClass, setSelectPartClass] = useState(row.partClass);
 	const [partName, setPartName] = useState(row.partName);
 	const [notes, setNotes] = useState(row.notes);
+	const [partClass, setPartClass] = useState([]);
+	const [updateDate, setUpdateDate] = useState(row.updateNewDate);
 
-	const handleChangeMethod = (e) => {
-		setSelectMethod(e.target.value);
-		fb.updatePart('MUSE', row.field, id, {
-			method: e.target.value,
+	const handleChangeClass = (e) => {
+		setSelectPartClass(e.target.value);
+		setUpdateDate(new Date());
+		fb.updatePart(companyId, row.field, id, {
+			partClass: e.target.value,
+			updateDate: new Date(),
+			updateUser: user.displayName,
 		}).then(console.log('🟠工法を更新'));
 	};
 
@@ -46,20 +54,37 @@ function partDetail() {
 		const char = e.target.value.replace(/[^\x01-\x7E\xA1-\xDF]+/g, '');
 		const name = char.toUpperCase();
 		setPartName(name);
-		fb.updatePart('MUSE', row.field, id, {
-			partName: name,
-		});
+	};
+
+	// 文字列が多いため、テキストフィールドのフォーカスを失ったときにfbへ書き込む
+	const handleBlurPartName = (e) => {
+		setUpdateDate(new Date());
+		fb.updatePart(companyId, row.field, id, {
+			partName: partName,
+			updateDate: new Date(),
+			updateUser: user.displayName,
+		}).then(console.log('🟠品名を更新'));
 	};
 
 	const handleChangeNotes = (e) => {
 		setNotes(e.target.value);
 	};
 
-	const handleBlur = (e) => {
-		fb.updatePart('MUSE', row.field, id, {
+	// 文字列が多いため、テキストフィールドのフォーカスを失ったときにfbへ書き込む
+	const handleBlurNotes = (e) => {
+		setUpdateDate(new Date());
+		fb.updatePart(companyId, row.field, id, {
 			notes: notes,
+			updateDate: new Date(),
+			updateUser: user.displayName,
 		}).then(console.log('🟠備考を更新'));
 	};
+
+	useEffect(() => {
+		fb.getPartClass(companyId).then((items) => {
+			setPartClass(items);
+		});
+	}, []);
 
 	return (
 		<div>
@@ -82,6 +107,7 @@ function partDetail() {
 					label="品名"
 					value={partName}
 					onChange={handleChangePartName}
+					onBlur={handleBlurPartName}
 					InputProps={{
 						readOnly: false,
 					}}
@@ -112,12 +138,12 @@ function partDetail() {
 					<Select
 						labelId="select-method"
 						id="methodSelect"
-						value={selectMethod}
+						value={selectPartClass}
 						label="Item"
-						onChange={handleChangeMethod}
+						onChange={handleChangeClass}
 						sx={{ textAlign: 'left', m: 0, width: '8em' }}
 					>
-						{method.map((item, index) => (
+						{partClass.map((item, index) => (
 							<MenuItem key={index} value={item}>
 								{item}
 							</MenuItem>
@@ -142,7 +168,7 @@ function partDetail() {
 					id="updateDate"
 					name="updateDate"
 					label="最終更新日"
-					value={format(row.updateNewDate, 'yyyy-MM-dd')}
+					value={format(updateDate, 'yyyy-MM-dd')}
 					InputProps={{
 						readOnly: true,
 					}}
@@ -167,7 +193,7 @@ function partDetail() {
 					label="備考"
 					value={notes}
 					onChange={handleChangeNotes}
-					onBlur={handleBlur}
+					onBlur={handleBlurNotes}
 					multiline
 					rows={3}
 					fullWidth
@@ -177,7 +203,15 @@ function partDetail() {
 					sx={{ mb: 1 }}
 				/>
 			</Box>
-
+			<Button
+				variant="contained"
+				sx={{ m: 1 }}
+				onClick={() => {
+					navigation(-1);
+				}}
+			>
+				マスター部品一覧へ戻る
+			</Button>
 			<PdfFileUpload {...props} />
 			<StepFileUpload {...props}></StepFileUpload>
 			<Button
@@ -187,7 +221,7 @@ function partDetail() {
 					navigation(-1);
 				}}
 			>
-				戻る
+				マスター部品一覧へ戻る
 			</Button>
 		</div>
 	);

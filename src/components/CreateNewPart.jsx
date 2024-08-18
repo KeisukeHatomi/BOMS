@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import * as fb from '../common/FirestoreUserFunctions';
 import DlgComfirm from '../common/DlgComfirmResistNerPart';
+import { PropContext } from '../context/PropContext';
 
 import { Navigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
@@ -13,6 +14,7 @@ import HomeIcon from '@mui/icons-material/Home';
 const COMPANY = 'MUSE';
 
 function CreateNewPart() {
+	const { companyId } = useContext(PropContext);
 	const [partName, setPartName] = useState('');
 	const [partCode, setPartCode] = useState('');
 	const [method, setMethod] = useState('');
@@ -47,9 +49,9 @@ function CreateNewPart() {
 			notes: notes,
 		};
 
-		fb.getPart(COMPANY, header.field, newCode.value).then((data) => {
+		fb.getPart(companyId, header.field, newCode.value).then((data) => {
 			if (data === null) {
-				fb.setPart(COMPANY, header.field, newCode.value, partProp);
+				fb.setPart(companyId, header.field, newCode.value, partProp);
 				setDigOpen(true);
 			} else {
 			}
@@ -68,7 +70,7 @@ function CreateNewPart() {
 	};
 
 	const createCodeNumber = async (head) => {
-		const res = await fb.getCategory(COMPANY);
+		const res = await fb.getCategory(companyId);
 		// 対象ヘッドコードの最終番号を取得して新番を設定
 		const newVal = res[head.field].lastNumber + 1;
 		console.log('newVal🔵 ', newVal);
@@ -77,7 +79,7 @@ function CreateNewPart() {
 			number: newVal,
 		};
 		// 品番カテゴリーの最終番号をアップデート
-		await fb.updateCategory(COMPANY, {
+		await fb.updateCategory(companyId, {
 			category: {
 				[head.field]: { lastNumber: newVal },
 			},
@@ -86,7 +88,7 @@ function CreateNewPart() {
 	};
 
 	useEffect(() => {
-		fb.getCategory(COMPANY).then((item) => {
+		fb.getCategory(companyId).then((item) => {
 			const item_array = Object.entries(item).map(([key, value]) => {
 				return {
 					field: key,

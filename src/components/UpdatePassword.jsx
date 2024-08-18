@@ -130,6 +130,9 @@ function UpdatePassword() {
 					<Button type="submit" variant="contained" sx={{ margin: '20px' }}>
 						パスワード変更
 					</Button>
+					<Button variant="contained" sx={{ margin: '10px' }} href="/">
+						キャンセル
+					</Button>
 				</div>
 			</form>
 		</div>

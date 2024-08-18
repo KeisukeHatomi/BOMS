@@ -74,7 +74,7 @@ function StepFileUpload(props) {
 					setPreviewStepUrl(downloadURL);
 					setStepUploading(false);
 					// Firestoreに図面Urlを保存
-					fb.setModelDataUrl('MUSE', props.field, props.partCode, downloadURL);
+					fb.setModelDataUrl(companyId, props.field, props.partCode, downloadURL);
 
 					// file 形式からarrayBuf形式へ変換
 					const reader = new FileReader();
@@ -107,7 +107,7 @@ function StepFileUpload(props) {
 	});
 
 	useEffect(() => {
-		fb.getComanyId('MUSE').then((item) => {
+		fb.getCompanyId('MUSE').then((item) => {
 			setCompanyId(item);
 		});
 
@@ -115,7 +115,6 @@ function StepFileUpload(props) {
 			if (previewStepUrl) {
 				try {
 					const response = await fetch(previewStepUrl);
-					console.log('STEPファイルロード🔵 ', response);
 					const arrayBuffer = await response.arrayBuffer();
 					setFile(arrayBuffer);
 					setIsLoaded(true);

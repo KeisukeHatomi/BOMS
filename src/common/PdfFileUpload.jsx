@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import * as fb from './FirestoreUserFunctions';
+import { PropContext } from '../context/PropContext';
 
 import { Box, Button, Typography, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -10,7 +11,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 
 function PdfFileUpload(props) {
-	const [companyId, setCompanyId] = useState('');
+	const { companyId } = useContext(PropContext);
 	const [pdfUploading, setPdfUploading] = useState(false);
 	const [previewPdfUrl, setPreviewPdfUrl] = useState(props.drawingUrl);
 
@@ -30,7 +31,7 @@ function PdfFileUpload(props) {
 					setPreviewPdfUrl(downloadURL);
 					setPdfUploading(false);
 					// Firestoreに図面Urlを保存
-					fb.setDrawingUrl('MUSE', props.field, props.partCode, downloadURL);
+					fb.setDrawingUrl(companyId, props.field, props.partCode, downloadURL);
 				});
 			})
 			.catch((error) => {
@@ -40,15 +41,9 @@ function PdfFileUpload(props) {
 	};
 	const { getRootProps, getInputProps, open } = useDropzone({
 		onDrop,
-		noClick:true,
+		noClick: true,
 		multiple: false, // 複数ファイルのアップロードを禁止
 	});
-
-	useEffect(() => {
-		fb.getComanyId('MUSE').then((item) => {
-			setCompanyId(item);
-		});
-	}, []);
 
 	return (
 		<Box>
