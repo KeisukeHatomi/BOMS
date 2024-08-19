@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import * as fb from '../common/FirestoreUserFunctions';
 import { Navigate, useNavigate } from 'react-router-dom';
-
+import * as fb from '../common/FirestoreUserFunctions';
 import { useAuthContext } from '../context/AuthContext';
 import { PropContext } from '../context/PropContext';
-
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
@@ -15,9 +13,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
-const muiDataGridPageSize = 20;
-
-const COMPANY = 'MUSE';
+const muiDataGridPageSize = 25;
 
 const columns = [
 	{
@@ -28,7 +24,7 @@ const columns = [
 		align: 'center',
 		sortable: true,
 		editable: false,
-		width: 120,
+		flex: 15,
 	},
 	{
 		field: 'partName',
@@ -38,7 +34,7 @@ const columns = [
 		align: 'center',
 		sortable: true,
 		editable: true,
-		width: 250,
+		flex: 40,
 	},
 	{
 		field: 'revision',
@@ -48,7 +44,7 @@ const columns = [
 		align: 'center',
 		sortable: true,
 		editable: true,
-		width: 60,
+		flex: 10,
 		type: 'number',
 	},
 	{
@@ -59,13 +55,13 @@ const columns = [
 		align: 'center',
 		sortable: true,
 		editable: true,
-		width: 150,
+		flex: 20,
 	},
 	{
 		headerClassName: 'header',
 		field: 'drawingUrl',
 		headerName: '図面',
-		width: 80,
+		flex: 10,
 		headerAlign: 'center',
 		align: 'center',
 		renderCell: (params) => {
@@ -91,7 +87,7 @@ const columns = [
 		headerClassName: 'header',
 		field: 'modelDataUrl',
 		headerName: '3Dモデル',
-		width: 80,
+		flex: 10,
 		headerAlign: 'center',
 		align: 'center',
 		renderCell: (params) => {
@@ -114,14 +110,14 @@ const columns = [
 		},
 	},
 	{
-		field: 'createdUser',
-		headerName: '担当者',
+		field: 'updateUser',
+		headerName: '最終更新者',
 		headerClassName: 'header',
 		headerAlign: 'center',
 		align: 'center',
 		sortable: true,
 		editable: false,
-		width: 120,
+		flex: 20,
 	},
 	{
 		field: 'updateNewDate',
@@ -131,18 +127,7 @@ const columns = [
 		align: 'center',
 		sortable: true,
 		editable: false,
-		width: 120,
-		type: 'date',
-	},
-	{
-		field: 'createdNewDate',
-		headerName: '登録日',
-		headerClassName: 'header',
-		headerAlign: 'center',
-		align: 'center',
-		sortable: true,
-		editable: false,
-		width: 120,
+		flex: 20,
 		type: 'date',
 	},
 ];
@@ -163,7 +148,12 @@ function MasterPatrsList() {
 		Name: 'Name',
 		Code: 'Code',
 		Rows: 'Rows',
+		Page: 'Page',
 	};
+
+	// 前回表示していた最後のページを読み込む
+	const prePage = localStorage.getItem(strageKey.Page);
+	const gridPage = prePage !== null ? prePage : 0;
 
 	/**
 	 * 品名検索キーを含む品名を検索して、Rowsにセットし、
@@ -226,6 +216,7 @@ function MasterPatrsList() {
 				return { field: header.field, createdNewDate: crDate, updateNewDate: upDate, ...elem };
 			});
 
+			// 前回の検索キーを読み込む
 			const nameWord = localStorage.getItem(strageKey.Name);
 			if (nameWord) {
 				setNameKeyWord(nameWord);
@@ -236,6 +227,7 @@ function MasterPatrsList() {
 				setRows(res);
 			}
 
+			// 前回表の検索キーを読み込む
 			const codeWord = localStorage.getItem(strageKey.Code);
 			if (codeWord) {
 				setCodeKeyWord(codeWord);
@@ -268,6 +260,12 @@ function MasterPatrsList() {
 		navigation(`/partDetail/${params.id}`, { state: { row: params.row } });
 	};
 
+	const handlePageChange = (e) => {
+		if (e.page >= 0) {
+			localStorage.setItem(strageKey.Page, e.page);
+		}
+	};
+
 	const handleTest = () => {
 		const value1 = localStorage.getItem(strageKey.Category);
 		const value2 = localStorage.getItem(strageKey.Name);
@@ -278,6 +276,11 @@ function MasterPatrsList() {
 	};
 
 	useEffect(() => {
+		// リロードされるとuseContextが消えるので、ホームへ戻す
+		if (!companyId) {
+			navigation('/');
+		}
+
 		fb.getCategory(companyId).then((item) => {
 			const item_array = Object.entries(item).map(([key, value]) => {
 				return {
@@ -303,6 +306,7 @@ function MasterPatrsList() {
 							return { field: header.field, createdNewDate: crDate, updateNewDate: upDate, ...elem };
 						});
 
+						// 前回表の検索キーを読み込む
 						const nameWord = localStorage.getItem(strageKey.Name);
 						if (nameWord) {
 							setNameKeyWord(nameWord);
@@ -313,6 +317,7 @@ function MasterPatrsList() {
 							setRows(res);
 						}
 
+						// 前回表の検索キーを読み込む
 						const codeWord = localStorage.getItem(strageKey.Code);
 						if (codeWord) {
 							setCodeKeyWord(codeWord);
@@ -334,6 +339,7 @@ function MasterPatrsList() {
 
 	return rows ? (
 		<div>
+			<Box sx={{ marginTop: 1, fontSize: 'h4', fontWeight: 'bold' }}>マスター部品一覧</Box>
 			<FormControl
 				variant="standard"
 				sx={{
@@ -342,7 +348,7 @@ function MasterPatrsList() {
 					justifyContent: 'flex-start',
 					p: 0,
 					mt: 1,
-					width: 340,
+					width: 400,
 					border: 'none',
 					borderRadius: 2,
 				}}
@@ -404,7 +410,6 @@ function MasterPatrsList() {
 					borderRadius: 2,
 					border: 1,
 					mt: 1,
-
 					'& .header': {
 						backgroundColor: 'lightgrey',
 						fontSize: '1em',
@@ -421,11 +426,13 @@ function MasterPatrsList() {
 						pagination: {
 							paginationModel: {
 								pageSize: muiDataGridPageSize,
+								page: Number(gridPage),
 							},
 						},
 					}}
-					pageSizeOptions={[muiDataGridPageSize]}
-					onRowClick={handleRowClick}
+					onRowDoubleClick={handleRowClick}
+					onPaginationModelChange={handlePageChange}
+
 					// sortModel={[{
 					//     field: 'bizName', // ここでソートする列を指定
 					//     sort: 'asc', // 降順でソート

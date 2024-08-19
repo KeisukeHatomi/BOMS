@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import * as fb from './FirestoreUserFunctions';
-
 import { Box, Button, Typography, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
+import { useDropzone } from 'react-dropzone';
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {

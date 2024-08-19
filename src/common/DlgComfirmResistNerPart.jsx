@@ -1,9 +1,9 @@
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
 
 function DlgConfirm(props) {
 	// プロパティの受け取り

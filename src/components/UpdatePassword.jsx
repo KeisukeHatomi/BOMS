@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { updatePassword } from 'firebase/auth';
 import { useAuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import { Button, InputAdornment, TextField } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';

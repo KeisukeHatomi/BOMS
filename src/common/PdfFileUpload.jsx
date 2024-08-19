@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { PropContext } from '../context/PropContext';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import * as fb from './FirestoreUserFunctions';
-import { PropContext } from '../context/PropContext';
-
 import { Box, Button, Typography, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
+import { useDropzone } from 'react-dropzone';
 
 function PdfFileUpload(props) {
 	const { companyId } = useContext(PropContext);

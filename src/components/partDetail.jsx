@@ -3,7 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { PropContext } from '../context/PropContext';
-
+import * as fb from '../common/FirestoreUserFunctions';
 import PdfFileUpload from '../common/PdfFileUpload';
 import StepFileUpload from '../common/StepFileUpload';
 
@@ -11,8 +11,6 @@ import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import * as fb from '../common/FirestoreUserFunctions';
-
 import { format } from 'date-fns';
 
 function partDetail() {
@@ -58,12 +56,14 @@ function partDetail() {
 
 	// 文字列が多いため、テキストフィールドのフォーカスを失ったときにfbへ書き込む
 	const handleBlurPartName = (e) => {
-		setUpdateDate(new Date());
-		fb.updatePart(companyId, row.field, id, {
-			partName: partName,
-			updateDate: new Date(),
-			updateUser: user.displayName,
-		}).then(console.log('🟠品名を更新'));
+		if (e.target.value !== row.partName) {
+			setUpdateDate(new Date());
+			fb.updatePart(companyId, row.field, id, {
+				partName: partName,
+				updateDate: new Date(),
+				updateUser: user.displayName,
+			}).then(console.log('🟠品名を更新'));
+		}
 	};
 
 	const handleChangeNotes = (e) => {
@@ -72,15 +72,22 @@ function partDetail() {
 
 	// 文字列が多いため、テキストフィールドのフォーカスを失ったときにfbへ書き込む
 	const handleBlurNotes = (e) => {
-		setUpdateDate(new Date());
-		fb.updatePart(companyId, row.field, id, {
-			notes: notes,
-			updateDate: new Date(),
-			updateUser: user.displayName,
-		}).then(console.log('🟠備考を更新'));
+		if (e.target.value !== row.notes) {
+			setUpdateDate(new Date());
+			fb.updatePart(companyId, row.field, id, {
+				notes: notes,
+				updateDate: new Date(),
+				updateUser: user.displayName,
+			}).then(console.log('🟠備考を更新'));
+		}
 	};
 
 	useEffect(() => {
+		// リロードされるとuseContextが消えるので、ホームへ戻す
+		if (!companyId) {
+			navigation('/');
+		}
+
 		fb.getPartClass(companyId).then((items) => {
 			setPartClass(items);
 		});
@@ -98,7 +105,7 @@ function partDetail() {
 					InputProps={{
 						readOnly: true,
 					}}
-					sx={{ mr: 1, width: '12em' }}
+					sx={{ mr: 1, width: '10em' }}
 				/>
 				<TextField
 					variant="standard"
@@ -111,7 +118,7 @@ function partDetail() {
 					InputProps={{
 						readOnly: false,
 					}}
-					sx={{ mr: 1, width: '30em' }}
+					sx={{ mr: 1, width: '20em' }}
 				/>
 				<TextField
 					variant="standard"
@@ -122,7 +129,7 @@ function partDetail() {
 					InputProps={{
 						readOnly: true,
 					}}
-					sx={{ mr: 1, width: '5em' }}
+					sx={{ mr: 1, width: '3em' }}
 				/>
 				<FormControl
 					variant="standard"
@@ -141,7 +148,7 @@ function partDetail() {
 						value={selectPartClass}
 						label="Item"
 						onChange={handleChangeClass}
-						sx={{ textAlign: 'left', m: 0, width: '8em' }}
+						sx={{ textAlign: 'left', m: 0, width: '12em' }}
 					>
 						{partClass.map((item, index) => (
 							<MenuItem key={index} value={item}>
@@ -158,7 +165,6 @@ function partDetail() {
 					value={format(row.createdNewDate, 'yyyy-MM-dd')}
 					InputProps={{
 						readOnly: true,
-						style: { textAlign: 'center' },
 					}}
 					type="date"
 					sx={{ mr: 1, width: '7em' }}

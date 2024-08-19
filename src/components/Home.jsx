@@ -1,10 +1,10 @@
 import { useEffect, createContext, useContext } from 'react';
-import { auth } from '../firebase';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { useAuthContext } from '../context/AuthContext';
-import { Button, Box, FormControl } from '@mui/material';
 import * as fb from '../common/FirestoreUserFunctions';
+import { auth } from '../firebase';
+import { useAuthContext } from '../context/AuthContext';
 import { PropContext } from '../context/PropContext';
+import { Button, Box, FormControl } from '@mui/material';
 
 const Home = () => {
 	const navigation = useNavigate();

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import * as fb from '../common/FirestoreUserFunctions';
 import DlgComfirm from '../common/DlgComfirmResistNerPart';
 import { PropContext } from '../context/PropContext';
 
-import { Navigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -40,6 +40,7 @@ function CreateNewPart() {
 			createdDate: new Date(),
 			updateDate: new Date(),
 			createdUser: user.displayName,
+			updateUser: user.displayName,
 			drawingUrl: '',
 			modelDataUrl: '',
 			method: method,
@@ -88,6 +89,11 @@ function CreateNewPart() {
 	};
 
 	useEffect(() => {
+		// リロードされるとuseContextが消えるので、ホームへ戻す
+		if (!companyId) {
+			navigation('/');
+		}
+
 		fb.getCategory(companyId).then((item) => {
 			const item_array = Object.entries(item).map(([key, value]) => {
 				return {
