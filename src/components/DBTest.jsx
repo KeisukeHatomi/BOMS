@@ -1,12 +1,14 @@
-import React from 'react';
+import React,{useContext, useEffect} from 'react';
 import * as fb from '../common/FirestoreUserFunctions';
 import { Button } from '@mui/material';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { PropContext } from '../context/PropContext';
+import { useAuthContext } from '../context/AuthContext';
 
 function dbTest() {
 	const navigation = useNavigate();
 	const { companyId } = useContext(PropContext);
+	const { user } = useAuthContext();
 
 	const func = {
 		setField: 1,
@@ -14,10 +16,12 @@ function dbTest() {
 		getPart: 3,
 		getPartClass: 4,
 		updatePartClass: 5,
+		getLog: 6,
+		setLog: 7
 	};
 
 	// 実行したい関数を設定
-	const execFunc = func.getPartClass;
+	const execFunc = func.setLog;
 
 	const handleExec = () => {
 		const company = 'MUSE';
@@ -45,10 +49,31 @@ function dbTest() {
 				fb.updateClass(companyId, '金属切削');
 				break;
 
+			case func.getLog:
+				console.log('getLog ');
+				fb.getAllLog(companyId).then((e) => console.log(e));
+				break;
+
+			case func.setLog:
+				console.log('setLog ');
+				fb.setLog(companyId, {
+					date: new Date(),
+					user: user.displayName,
+					action: '新規登録',
+				}).then((e) => console.log(e));
+				break;
+
 			default:
 				break;
 		}
 	};
+
+	useEffect(()=>{
+		// リロードされるとuseContextが消えるので、ホームへ戻す
+		if (!companyId) {
+			navigation('/');
+		}
+	},[])
 
 	return (
 		<div>

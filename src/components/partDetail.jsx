@@ -30,6 +30,7 @@ function partDetail() {
 		revision: row.revision,
 		drawingUrl: row.drawingUrl,
 		modelDataUrl: row.modelDataUrl,
+		user: user,
 	};
 
 	const [selectPartClass, setSelectPartClass] = useState(row.partClass);
@@ -45,7 +46,14 @@ function partDetail() {
 			partClass: e.target.value,
 			updateDate: new Date(),
 			updateUser: user.displayName,
-		}).then(console.log('🟠工法を更新'));
+		}).then(() => {
+			// Log
+			fb.setLog(companyId, {
+				date: new Date(),
+				user: user.displayName,
+				action: '工法 : ' + selectPartClass + ' -> ' + e.target.value,
+			});
+		});
 	};
 
 	const handleChangePartName = (e) => {
@@ -62,7 +70,14 @@ function partDetail() {
 				partName: partName,
 				updateDate: new Date(),
 				updateUser: user.displayName,
-			}).then(console.log('🟠品名を更新'));
+			}).then(() => {
+				// Log
+				fb.setLog(companyId, {
+					date: new Date(),
+					user: user.displayName,
+					action: '品名 : ' + row.partName + ' -> ' + e.target.value,
+				});
+			});
 		}
 	};
 
@@ -78,7 +93,14 @@ function partDetail() {
 				notes: notes,
 				updateDate: new Date(),
 				updateUser: user.displayName,
-			}).then(console.log('🟠備考を更新'));
+			}).then(
+				// Log
+				fb.setLog(companyId, {
+					date: new Date(),
+					user: user.displayName,
+					action: '備考 : ' + row.notes + ' -> ' + e.target.value,
+				})
+			);
 		}
 	};
 
@@ -105,7 +127,7 @@ function partDetail() {
 					InputProps={{
 						readOnly: true,
 					}}
-					sx={{ mr: 1, width: '10em' }}
+					sx={{ mr: 1, width: '8em' }}
 				/>
 				<TextField
 					variant="standard"
@@ -118,7 +140,7 @@ function partDetail() {
 					InputProps={{
 						readOnly: false,
 					}}
-					sx={{ mr: 1, width: '20em' }}
+					sx={{ mr: 1, width: '15em' }}
 				/>
 				<TextField
 					variant="standard"
@@ -148,7 +170,7 @@ function partDetail() {
 						value={selectPartClass}
 						label="Item"
 						onChange={handleChangeClass}
-						sx={{ textAlign: 'left', m: 0, width: '12em' }}
+						sx={{ textAlign: 'left', mr: 5, width: '12em' }}
 					>
 						{partClass.map((item, index) => (
 							<MenuItem key={index} value={item}>
@@ -157,6 +179,30 @@ function partDetail() {
 						))}
 					</Select>
 				</FormControl>
+				<TextField
+					variant="standard"
+					id="updateDate"
+					name="updateDate"
+					label="最終更新日"
+					value={format(updateDate, 'yyyy-MM-dd')}
+					InputProps={{
+						readOnly: true,
+					}}
+					type="date"
+					sx={{ mr: 1, width: '7em' }}
+				/>
+				<TextField
+					variant="standard"
+					id="updateUser"
+					name="updateDate"
+					label="更新者"
+					value={row.updateUser}
+					InputProps={{
+						readOnly: true,
+					}}
+					type="text"
+					sx={{ mr: 5, width: '7em' }}
+				/>
 				<TextField
 					variant="standard"
 					id="createdDate"
@@ -171,15 +217,15 @@ function partDetail() {
 				/>
 				<TextField
 					variant="standard"
-					id="updateDate"
-					name="updateDate"
-					label="最終更新日"
-					value={format(updateDate, 'yyyy-MM-dd')}
+					id="createdUser"
+					name="createdUser"
+					label="登録者"
+					value={row.createdUser}
 					InputProps={{
 						readOnly: true,
 					}}
-					type="date"
-					sx={{ mr: 1, width: '7em' }}
+					type="text"
+					sx={{ mr: 1, width: '7em'}}
 				/>
 			</Box>
 			<Box

@@ -15,123 +15,6 @@ import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 const muiDataGridPageSize = 25;
 
-const columns = [
-	{
-		field: 'id',
-		headerName: '品番',
-		headerClassName: 'header',
-		headerAlign: 'center',
-		align: 'center',
-		sortable: true,
-		editable: false,
-		flex: 15,
-	},
-	{
-		field: 'partName',
-		headerName: '品名',
-		headerClassName: 'header',
-		headerAlign: 'center',
-		align: 'center',
-		sortable: true,
-		editable: true,
-		flex: 40,
-	},
-	{
-		field: 'revision',
-		headerName: '版数',
-		headerClassName: 'header',
-		headerAlign: 'center',
-		align: 'center',
-		sortable: true,
-		editable: true,
-		flex: 10,
-		type: 'number',
-	},
-	{
-		field: 'partClass',
-		headerName: '工法',
-		headerClassName: 'header',
-		headerAlign: 'center',
-		align: 'center',
-		sortable: true,
-		editable: true,
-		flex: 20,
-	},
-	{
-		headerClassName: 'header',
-		field: 'drawingUrl',
-		headerName: '図面',
-		flex: 10,
-		headerAlign: 'center',
-		align: 'center',
-		renderCell: (params) => {
-			const hasValue = params.row.drawingUrl !== '';
-			return (
-				<>
-					{hasValue && (
-						<>
-							{/* アイコンを表示 */}
-							<CloudDownloadIcon
-								onClick={() => {
-									alert('Edit ' + params.id);
-								}}
-								style={{ cursor: 'pointer', marginRight: '10px' }}
-							/>
-						</>
-					)}
-				</>
-			);
-		},
-	},
-	{
-		headerClassName: 'header',
-		field: 'modelDataUrl',
-		headerName: '3Dモデル',
-		flex: 10,
-		headerAlign: 'center',
-		align: 'center',
-		renderCell: (params) => {
-			const hasValue = params.row.modelDataUrl !== '';
-			return (
-				<>
-					{hasValue && (
-						<>
-							{/* アイコンを表示 */}
-							<CloudDownloadIcon
-								onClick={() => {
-									alert('Edit ' + params.id);
-								}}
-								style={{ cursor: 'pointer', marginRight: '10px' }}
-							/>
-						</>
-					)}
-				</>
-			);
-		},
-	},
-	{
-		field: 'updateUser',
-		headerName: '最終更新者',
-		headerClassName: 'header',
-		headerAlign: 'center',
-		align: 'center',
-		sortable: true,
-		editable: false,
-		flex: 20,
-	},
-	{
-		field: 'updateNewDate',
-		headerName: '最終更新日',
-		headerClassName: 'header',
-		headerAlign: 'center',
-		align: 'center',
-		sortable: true,
-		editable: false,
-		flex: 20,
-		type: 'date',
-	},
-];
-
 function MasterPatrsList() {
 	const navigation = useNavigate();
 
@@ -150,6 +33,123 @@ function MasterPatrsList() {
 		Rows: 'Rows',
 		Page: 'Page',
 	};
+
+	const columns = [
+		{
+			field: 'id',
+			headerName: '品番',
+			headerClassName: 'header',
+			headerAlign: 'center',
+			align: 'center',
+			sortable: true,
+			editable: false,
+			flex: 15,
+		},
+		{
+			field: 'partName',
+			headerName: '品名',
+			headerClassName: 'header',
+			headerAlign: 'center',
+			align: 'center',
+			sortable: true,
+			editable: false,
+			flex: 40,
+		},
+		{
+			field: 'revision',
+			headerName: '版数',
+			headerClassName: 'header',
+			headerAlign: 'center',
+			align: 'center',
+			sortable: true,
+			editable: false,
+			flex: 10,
+			type: 'number',
+		},
+		{
+			field: 'partClass',
+			headerName: '工法',
+			headerClassName: 'header',
+			headerAlign: 'center',
+			align: 'center',
+			sortable: true,
+			editable: false,
+			flex: 20,
+		},
+		{
+			headerClassName: 'header',
+			field: 'drawingUrl',
+			headerName: '図面',
+			flex: 10,
+			headerAlign: 'center',
+			align: 'center',
+			renderCell: (params) => {
+				const hasValue = params.row.drawingUrl !== '';
+				return (
+					<>
+						{hasValue && (
+							<>
+								{/* アイコンを表示 */}
+								<CloudDownloadIcon
+									onClick={() => {
+										handleDownloadPDF(params.id);
+									}}
+									style={{ cursor: 'pointer', marginRight: '10px' }}
+								/>
+							</>
+						)}
+					</>
+				);
+			},
+		},
+		{
+			headerClassName: 'header',
+			field: 'modelDataUrl',
+			headerName: '3Dモデル',
+			flex: 10,
+			headerAlign: 'center',
+			align: 'center',
+			renderCell: (params) => {
+				const hasValue = params.row.modelDataUrl !== '';
+				return (
+					<>
+						{hasValue && (
+							<>
+								{/* アイコンを表示 */}
+								<CloudDownloadIcon
+									onClick={() => {
+										handleDownloadStep(params.id);
+									}}
+									style={{ cursor: 'pointer', marginRight: '10px' }}
+								/>
+							</>
+						)}
+					</>
+				);
+			},
+		},
+		{
+			field: 'updateUser',
+			headerName: '最終更新者',
+			headerClassName: 'header',
+			headerAlign: 'center',
+			align: 'center',
+			sortable: true,
+			editable: false,
+			flex: 20,
+		},
+		{
+			field: 'updateNewDate',
+			headerName: '最終更新日',
+			headerClassName: 'header',
+			headerAlign: 'center',
+			align: 'center',
+			sortable: true,
+			editable: false,
+			flex: 20,
+			type: 'date',
+		},
+	];
 
 	// 前回表示していた最後のページを読み込む
 	const prePage = localStorage.getItem(strageKey.Page);
@@ -242,21 +242,7 @@ function MasterPatrsList() {
 		localStorage.setItem(strageKey.Category, item);
 	};
 
-	// const handleNameSerch = (e) => {
-	// 	const res = allParts.current.filter((part) => {
-	// 		return part.partName.includes(nameKeyWord);
-	// 	});
-	// 	setRows(res);
-	// };
-
-	// const handleCodeSerch = (e) => {
-	// 	const res = allParts.current.filter((part) => {
-	// 		return part.id.includes(codeKeyWord);
-	// 	});
-	// 	setRows(res);
-	// };
-
-	const handleRowClick = (params) => {
+	const handleRowDoubleClick = (params) => {
 		navigation(`/partDetail/${params.id}`, { state: { row: params.row } });
 	};
 
@@ -266,13 +252,47 @@ function MasterPatrsList() {
 		}
 	};
 
-	const handleTest = () => {
-		const value1 = localStorage.getItem(strageKey.Category);
-		const value2 = localStorage.getItem(strageKey.Name);
-		const value3 = localStorage.getItem(strageKey.Code);
-		console.log('CategoryKey🔵 ', value1);
-		console.log('NameKey🔵 ', value2);
-		console.log('CodeKey🔵 ', value3);
+	/**
+	 * 部品情報からURLを取得してSTEPをダウンロードする
+	 * @param {*} code
+	 */
+	const handleDownloadStep = (code) => {
+		const res = allParts.current.find((part) => {
+			return part.id === code;
+		});
+		const newTab = window.open(res.modelDataUrl, '_blank');
+		if (newTab) {
+		} else {
+			alert('ポップアップがブロックされました。ブラウザの設定を確認してください。');
+		}
+		// const link = document.createElement('a');
+		// link.href = res.modelDataUrl;
+		// link.download = '';
+		// document.body.appendChild(link);
+		// link.click();
+		// document.body.removeChild(link);
+	};
+
+	/**
+	 * 部品情報からURLを取得してPDFをダウンロードする
+	 * @param {*} code
+	 */
+	const handleDownloadPDF = (code) => {
+		const res = allParts.current.find((part) => {
+			return part.id === code;
+		});
+		const newTab = window.open(res.drawingUrl, '_blank');
+		if (newTab) {
+		} else {
+			alert('ポップアップがブロックされました。ブラウザの設定を確認してください。');
+		}
+		// const link = document.createElement('a');
+		// link.href = res.drawingUrl;
+		// console.log(' res.drawingUrl🔵 ',  res.drawingUrl);
+		// link.download=''
+		// document.body.appendChild(link);
+		// link.click();
+		// document.body.removeChild(link);
 	};
 
 	useEffect(() => {
@@ -344,17 +364,17 @@ function MasterPatrsList() {
 				variant="standard"
 				sx={{
 					display: 'flex',
-					flexDirection: 'column',
+					flexDirection: 'row',
 					justifyContent: 'flex-start',
 					p: 0,
 					mt: 1,
-					width: 400,
+					ml: 1,
 					border: 'none',
 					borderRadius: 2,
 				}}
 			>
 				<Box sx={{ mb: 1, width: 200 }}>
-					<InputLabel sx={{ ml: 1 }} id="select-category">
+					<InputLabel sx={{ ml: 0 }} id="select-category">
 						カテゴリ
 					</InputLabel>
 					<Select
@@ -364,7 +384,7 @@ function MasterPatrsList() {
 						value={currentCategory}
 						label="Item"
 						onChange={handleChangeSelect}
-						sx={{ textAlign: 'left', ml: 1, width: '100%' }}
+						sx={{ textAlign: 'left', mr: 2, width: '100%' }}
 					>
 						{partCategory.map((item) => (
 							<MenuItem key={item.field} value={item.category}>
@@ -373,6 +393,20 @@ function MasterPatrsList() {
 						))}
 					</Select>
 				</Box>
+			</FormControl>
+			<FormControl
+				variant="standard"
+				sx={{
+					display: 'flex',
+					flexDirection: 'row',
+					justifyContent: 'flex-start',
+					p: 0,
+					ml: 1,
+					mt: 1,
+					border: 'none',
+					borderRadius: 2,
+				}}
+			>
 				<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-left', m: 0 }}>
 					<TextField
 						variant="standard"
@@ -386,8 +420,6 @@ function MasterPatrsList() {
 					{/* <Button startIcon={<SearchIcon />} variant="contained" sx={{ m: 1 }} onClick={handleNameSerch}>
 							品名検索
 						</Button> */}
-				</Box>
-				<Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-left', m: 0 }}>
 					<TextField
 						variant="standard"
 						id="serchCodeKey"
@@ -430,7 +462,7 @@ function MasterPatrsList() {
 							},
 						},
 					}}
-					onRowDoubleClick={handleRowClick}
+					onRowDoubleClick={handleRowDoubleClick}
 					onPaginationModelChange={handlePageChange}
 
 					// sortModel={[{
@@ -442,9 +474,6 @@ function MasterPatrsList() {
 			<Button startIcon={<HomeIcon />} variant="contained" sx={{ m: 1 }} href="/">
 				ホーム
 			</Button>
-			{/* <Button variant="contained" sx={{ m: 1 }} onClick={handleTest}>
-				Test
-			</Button> */}
 		</div>
 	) : (
 		<CircularProgress />

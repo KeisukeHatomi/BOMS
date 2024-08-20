@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../firebase';
-import { Button, InputAdornment, TextField } from '@mui/material';
+import { Button, InputAdornment, TextField, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
@@ -47,7 +47,7 @@ const SignUp = () => {
 
 	return (
 		<div>
-			<h1>ユーザ仮登録</h1>
+			<Box sx={{ marginTop: 1, fontSize: 'h4', fontWeight: 'bold' }}>ユーザー仮登録</Box>
 			{error && <p style={{ color: 'red' }}>{error}</p>}
 			<form onSubmit={handleSubmit}>
 				<div>

@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { PropContext } from '../context/PropContext';
 import { storage } from '../firebase';
-import { ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import * as fb from './FirestoreUserFunctions';
 import { Box, Button, Typography, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { useDropzone } from 'react-dropzone';
+import CommonDialog, { ButtonType } from '../common/Dialog';
 
 function PdfFileUpload(props) {
 	const { companyId } = useContext(PropContext);
+	const [digOpen, setDigOpen] = useState(false);
 	const [pdfUploading, setPdfUploading] = useState(false);
 	const [previewPdfUrl, setPreviewPdfUrl] = useState(props.drawingUrl);
 
@@ -30,7 +32,14 @@ function PdfFileUpload(props) {
 					setPreviewPdfUrl(downloadURL);
 					setPdfUploading(false);
 					// Firestoreに図面Urlを保存
-					fb.setDrawingUrl(companyId, props.field, props.partCode, downloadURL);
+					fb.setDrawingUrl(companyId, props.field, props.partCode, downloadURL).then(() => {
+						fb.setLog(companyId, {
+							// Log
+							date: new Date(),
+							user: props.user.displayName,
+							action: 'PDFアップロード : ' + fileName,
+						});
+					});
 				});
 			})
 			.catch((error) => {
@@ -38,6 +47,29 @@ function PdfFileUpload(props) {
 				setPdfUploading(false);
 			});
 	};
+
+	const handleDelete = () => {
+		setDigOpen(true);
+	};
+
+	const deletePDF = () => {
+		const fileName = `${props.partCode}_${props.partName}_Rev${props.revision}.pdf`;
+		const storageRef = ref(storage, `${companyId}/${fileName}`);
+		deleteObject(storageRef)
+			.then(() => {
+				fb.setLog(companyId, {
+					// Log
+					date: new Date(),
+					user: props.user.displayName,
+					action: 'PDF削除 : ' + fileName,
+				});
+				// ダウンロードurlを削除
+				fb.setDrawingUrl(companyId, props.field, props.partCode, '');
+				setPreviewPdfUrl('');
+			})
+			.catch((e) => console.log(e));
+	};
+
 	const { getRootProps, getInputProps, open } = useDropzone({
 		onDrop,
 		noClick: true,
@@ -82,7 +114,12 @@ function PdfFileUpload(props) {
 								>
 									図面の差し替え
 								</Button>
-								<Button startIcon={<DeleteForeverIcon />} variant="contained" component="span">
+								<Button
+									startIcon={<DeleteForeverIcon />}
+									variant="contained"
+									component="span"
+									onClick={handleDelete}
+								>
 									削除
 								</Button>
 							</Box>
@@ -102,6 +139,21 @@ function PdfFileUpload(props) {
 					</>
 				)}
 			</Box>
+			<CommonDialog
+				title="確認"
+				message="ファイルを削除します。復活はできません。よろしいですか？"
+				buttonType={ButtonType.YesNo}
+				onAccept={() => {
+					console.log('OK');
+					deletePDF();
+					setDigOpen(false);
+				}}
+				onClose={() => {
+					console.log('NO');
+					setDigOpen(false);
+				}}
+				open={digOpen}
+			/>
 		</Box>
 	);
 }

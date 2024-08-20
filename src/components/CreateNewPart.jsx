@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import * as fb from '../common/FirestoreUserFunctions';
 import DlgComfirm from '../common/DlgComfirmResistNerPart';
@@ -14,6 +14,8 @@ import HomeIcon from '@mui/icons-material/Home';
 const COMPANY = 'MUSE';
 
 function CreateNewPart() {
+	const navigation = useNavigate();
+
 	const { companyId } = useContext(PropContext);
 	const [partName, setPartName] = useState('');
 	const [partCode, setPartCode] = useState('');
@@ -52,7 +54,13 @@ function CreateNewPart() {
 
 		fb.getPart(companyId, header.field, newCode.value).then((data) => {
 			if (data === null) {
-				fb.setPart(companyId, header.field, newCode.value, partProp);
+				fb.setPart(companyId, header.field, newCode.value, partProp).then(()=>{
+					fb.setLog(companyId, { // Log
+						date: new Date(),
+						user: user.displayName,
+						action: '新設 : ' + newCode.value,
+					});
+				});
 				setDigOpen(true);
 			} else {
 			}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { db } from '../firebase';
-import Button from '@mui/material/Button';
+import { Button, Box } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -45,7 +45,7 @@ function UserProfile() {
 		const userProfile = {
 			lastName: lastName,
 			firstName: firstName,
-			displayName: lastName + " " + firstName,
+			displayName: lastName + ' ' + firstName,
 			purpose: purpose,
 			createdDate: new Date(),
 		};
@@ -99,8 +99,7 @@ function UserProfile() {
 	} else {
 		return (
 			<div>
-				<h1>ユーザ情報登録</h1>
-
+				<Box sx={{ marginTop: 1, fontSize: 'h4', fontWeight: 'bold' }}>ユーザプロファイル</Box>
 				<form onSubmit={handleSubmit}>
 					<div>
 						<TextField

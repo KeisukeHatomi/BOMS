@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { updatePassword } from 'firebase/auth';
 import { useAuthContext } from '../context/AuthContext';
 import { auth } from '../firebase';
-import { Button, InputAdornment, TextField } from '@mui/material';
+import { Button, InputAdornment, TextField, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
@@ -44,7 +44,7 @@ function UpdatePassword() {
 
 	return (
 		<div>
-			<h1>新しいパスワードの登録</h1>
+			<Box sx={{ marginTop: 1, fontSize: 'h4', fontWeight: 'bold' }}>パスワード変更</Box>
 			<form onSubmit={handleSubmit}>
 				<div>
 					<TextField

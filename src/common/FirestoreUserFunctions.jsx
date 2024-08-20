@@ -138,6 +138,33 @@ export const updateCategory = async (companyId, prop) => {
 };
 
 /**
+ *ログを取得する
+ * @param {*} companyId
+ * @returns
+ */
+export const getAllLog = async (companyId) => {
+	const docSnap = await getDoc(doc(db, COMPANY, companyId));
+	let result = null;
+	if (docSnap.exists()) {
+		result = docSnap.data();
+	}
+	return result.accessLog;
+};
+
+/**
+ * ログを更新する
+ * @param {*} companyId
+ * @param {*} prop
+ */
+export const setLog = async (companyId, prop) => {
+	await setDoc(doc(db, COMPANY, companyId), {
+		accessLog:{
+			[prop.date]:{user:prop.user, action:prop.action}
+		}
+	}, { merge: true });
+};
+
+/**
  * Strageに保存したPDF urlを書き込む
  * @param {*} companyId
  * @param {*} field
