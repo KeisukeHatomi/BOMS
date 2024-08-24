@@ -8,7 +8,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { useDropzone } from 'react-dropzone';
-import CommonDialog, { ButtonType } from '../common/Dialog';
+import CommonDialog, { ButtonType } from './Dialog';
 
 function PdfFileUpload(props) {
 	const { companyId } = useContext(PropContext);
@@ -72,6 +72,9 @@ function PdfFileUpload(props) {
 
 	const { getRootProps, getInputProps, open } = useDropzone({
 		onDrop,
+		accept: {
+			'application/pdf': ['.pdf'],
+		},
 		noClick: true,
 		multiple: false, // 複数ファイルのアップロードを禁止
 	});

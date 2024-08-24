@@ -8,7 +8,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { useDropzone } from 'react-dropzone';
 import { PropContext } from '../context/PropContext';
-import CommonDialog, { ButtonType } from '../common/Dialog';
+import CommonDialog, { ButtonType } from './Dialog';
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
@@ -131,6 +131,9 @@ function StepFileUpload(props) {
 
 	const { getRootProps, getInputProps, open } = useDropzone({
 		onDrop,
+		accept: {
+			'application/step': ['.step'],
+		},
 		noClick: true, // クリック時ファイルダイアログを開かせない
 		multiple: false, // 複数ファイルのアップロードを禁止
 	});

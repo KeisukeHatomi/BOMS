@@ -47,26 +47,26 @@ const Home = () => {
 	} else {
 		return (
 			<div>
-				<Box sx={{ marginTop: 1 }}> {user.displayName} さん</Box>
+				<Box sx={{ mt: 1 }}> {user.displayName} さん</Box>
 				<Box display="flex" flexDirection="coloumn" justifyContent="center">
-					<FormControl variant="standard" sx={{ width: 300 }}>
-						<Box sx={{ marginTop: 1, fontSize: 'h4', fontWeight: 'bold' }}>ホームメニュー</Box>
-						<Button variant="contained" onClick={handleMasterParts} sx={{ marginTop: '10px', width: 300 }}>
+					<FormControl variant="standard" sx={{ width: 200 }}>
+						<Box sx={{ mt: 1, fontSize: 'h4', fontWeight: 'bold' }}>ホームメニュー</Box>
+						<Button variant="contained" onClick={handleMasterParts} sx={{ mt: '10px'}}>
 							マスター部品一覧
 						</Button>
-						<Button variant="contained" onClick={handleCreatePart} sx={{ marginTop: '10px' }}>
+						<Button variant="contained" onClick={handleCreatePart} sx={{ mt: '10px' }}>
 							マスター部品登録
 						</Button>
-						<Button variant="contained" onClick={handleProfile} sx={{ marginTop: '10px' }}>
+						<Button variant="contained" onClick={handleProfile} sx={{ mt: '10px' }}>
 							ユーザプロファイル
 						</Button>
-						<Button variant="contained" onClick={handleUpdatePassword} sx={{ marginTop: '10px' }}>
+						<Button variant="contained" onClick={handleUpdatePassword} sx={{ mt: '10px' }}>
 							パスワードの変更
 						</Button>
-						<Button variant="contained" onClick={handleLogout} sx={{ marginTop: '10px' }}>
+						<Button variant="contained" onClick={handleLogout} sx={{ mt: '10px' }}>
 							ログアウト
 						</Button>
-						{/* <Button variant="outlined" onClick={handleDbTest} sx={{ marginTop: '10px' }}>
+						{/* <Button variant="outlined" onClick={handleDbTest} sx={{ mt: '10px' }}>
 							データベーステスト
 						</Button> */}
 					</FormControl>

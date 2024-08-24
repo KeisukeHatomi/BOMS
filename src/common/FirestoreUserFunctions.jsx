@@ -191,3 +191,19 @@ export const setModelDataUrl = async (companyId, field, code, url) => {
 	};
 	await setDoc(doc(db, COMPANY, companyId, field, code), prop, { merge: true });
 };
+
+
+/**
+ * Strageに保存したDXF urlを書き込む
+ * @param {*} companyId
+ * @param {*} field
+ * @param {*} code
+ * @param {*} url
+ */
+export const setDxfDataUrl = async (companyId, field, code, url) => {
+	const prop = {
+		dxfDataUrl: url,
+	};
+	await setDoc(doc(db, COMPANY, companyId, field, code), prop, { merge: true });
+};
+

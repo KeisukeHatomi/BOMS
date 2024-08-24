@@ -6,6 +6,7 @@ import { PropContext } from '../context/PropContext';
 import * as fb from '../common/FirestoreUserFunctions';
 import PdfFileUpload from '../common/PdfFileUpload';
 import StepFileUpload from '../common/StepFileUpload';
+import DxfFileUpload from '../common/DxfFileUpload';
 
 import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
@@ -30,6 +31,7 @@ function partDetail() {
 		revision: row.revision,
 		drawingUrl: row.drawingUrl,
 		modelDataUrl: row.modelDataUrl,
+		dxfDataUrl: row.dxfDataUrl,
 		user: user,
 	};
 
@@ -225,7 +227,7 @@ function partDetail() {
 						readOnly: true,
 					}}
 					type="text"
-					sx={{ mr: 1, width: '7em'}}
+					sx={{ mr: 1, width: '7em' }}
 				/>
 			</Box>
 			<Box
@@ -266,6 +268,7 @@ function partDetail() {
 			</Button>
 			<PdfFileUpload {...props} />
 			<StepFileUpload {...props}></StepFileUpload>
+			<DxfFileUpload {...props}></DxfFileUpload>
 			<Button
 				variant="contained"
 				sx={{ m: 1 }}

@@ -53,7 +53,7 @@ function MasterPatrsList() {
 			align: 'center',
 			sortable: true,
 			editable: false,
-			flex: 40,
+			flex: 35,
 		},
 		{
 			field: 'revision',
@@ -79,12 +79,12 @@ function MasterPatrsList() {
 		{
 			headerClassName: 'header',
 			field: 'drawingUrl',
-			headerName: '図面',
+			headerName: '図面PDF',
 			flex: 10,
 			headerAlign: 'center',
 			align: 'center',
 			renderCell: (params) => {
-				const hasValue = params.row.drawingUrl !== '';
+				const hasValue = params.row.drawingUrl !== '' && params.row.drawingUrl !== undefined;
 				return (
 					<>
 						{hasValue && (
@@ -110,7 +110,7 @@ function MasterPatrsList() {
 			headerAlign: 'center',
 			align: 'center',
 			renderCell: (params) => {
-				const hasValue = params.row.modelDataUrl !== '';
+				const hasValue = params.row.modelDataUrl !== '' && params.row.modelDataUrl !== undefined;
 				return (
 					<>
 						{hasValue && (
@@ -119,6 +119,32 @@ function MasterPatrsList() {
 								<CloudDownloadIcon
 									onClick={() => {
 										handleDownloadStep(params.id);
+									}}
+									style={{ cursor: 'pointer', marginRight: '10px' }}
+								/>
+							</>
+						)}
+					</>
+				);
+			},
+		},
+		{
+			headerClassName: 'header',
+			field: 'dxfDataUrl',
+			headerName: '図面DXF',
+			flex: 10,
+			headerAlign: 'center',
+			align: 'center',
+			renderCell: (params) => {
+				const hasValue = params.row.dxfDataUrl !== '' && params.row.dxfDataUrl !== undefined;
+				return (
+					<>
+						{hasValue && (
+							<>
+								{/* アイコンを表示 */}
+								<CloudDownloadIcon
+									onClick={() => {
+										handleDownloadDxf(params.id);
 									}}
 									style={{ cursor: 'pointer', marginRight: '10px' }}
 								/>
@@ -260,40 +286,70 @@ function MasterPatrsList() {
 		const res = allParts.current.find((part) => {
 			return part.id === code;
 		});
-		const newTab = window.open(res.modelDataUrl, '_blank');
-		if (newTab) {
-		} else {
-			alert('ポップアップがブロックされました。ブラウザの設定を確認してください。');
-		}
-		// const link = document.createElement('a');
-		// link.href = res.modelDataUrl;
-		// link.download = '';
-		// document.body.appendChild(link);
-		// link.click();
-		// document.body.removeChild(link);
+
+		const link = document.createElement('a');
+		link.href = res.modelDataUrl;
+		link.download = '';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	};
+
+	/**
+	 * 部品情報からURLを取得してDXFをダウンロードする
+	 * @param {*} code
+	 */
+	const handleDownloadDxf = (code) => {
+		const res = allParts.current.find((part) => {
+			return part.id === code;
+		});
+
+		const link = document.createElement('a');
+		link.href = res.dxfDataUrl;
+		link.download = '';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 	};
 
 	/**
 	 * 部品情報からURLを取得してPDFをダウンロードする
 	 * @param {*} code
 	 */
-	const handleDownloadPDF = (code) => {
+	const handleDownloadPDF = async (code) => {
 		const res = allParts.current.find((part) => {
 			return part.id === code;
 		});
-		const newTab = window.open(res.drawingUrl, '_blank');
-		if (newTab) {
-		} else {
-			alert('ポップアップがブロックされました。ブラウザの設定を確認してください。');
-		}
-		// const link = document.createElement('a');
-		// link.href = res.drawingUrl;
-		// console.log(' res.drawingUrl🔵 ',  res.drawingUrl);
-		// link.download=''
-		// document.body.appendChild(link);
-		// link.click();
-		// document.body.removeChild(link);
+		const responce = await fetch(res.drawingUrl);
+
+		// URLからファイル名を取得
+		const path = getFileNameFromStorageUrl(res.drawingUrl);
+		const _fname = path.split('%2F');
+		const fileName = _fname[1].replace('%20', ' ');
+		console.log('fileName🔵 ', fileName);
+
+		// ブラウザに拡張子PDFが関連付けされている場合があるため、Blobデータとして取得してダウンロード
+		const blob = await responce.blob();
+		const url = window.URL.createObjectURL(blob);
+
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = fileName;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 	};
+
+	function getFileNameFromStorageUrl(storageUrl) {
+		// URLをパースしてパスを取得
+		const url = new URL(storageUrl);
+		const path = url.pathname;
+
+		// パスからファイル名を取得
+		const fileName = path.split('/').pop();
+
+		return fileName;
+	}
 
 	useEffect(() => {
 		// リロードされるとuseContextが消えるので、ホームへ戻す
@@ -401,8 +457,8 @@ function MasterPatrsList() {
 					flexDirection: 'row',
 					justifyContent: 'flex-start',
 					p: 0,
-					ml: 1,
-					mt: 1,
+					ml: 0,
+					mt: 0,
 					border: 'none',
 					borderRadius: 2,
 				}}
