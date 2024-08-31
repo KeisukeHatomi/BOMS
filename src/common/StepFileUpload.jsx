@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import * as fb from './FirestoreUserFunctions';
@@ -14,6 +14,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
 	Grid,
 	OrbitControls,
+	Bounds,
 	Backdrop,
 	Center,
 	AccumulativeShadows,
@@ -25,9 +26,40 @@ import {
 import { Leva, useControls, button, buttonGroup, folder } from 'leva';
 import { LoadStep } from './geometryLoader';
 import { Straight } from '@mui/icons-material';
+import * as THREE from 'three';
 
-function StepModel({ data, ...props }) {
+const CameraAndLight = () => {
+	const { camera } = useThree();
+	const cameraLightRef1 = useRef();
+	const cameraLightRef2 = useRef();
+	const cameraLightRef3 = useRef();
+
+	useFrame(() => {
+		if (cameraLightRef1.current && cameraLightRef2.current && cameraLightRef3.current) {
+			// カメラの位置と同じ位置にライトを配置
+			cameraLightRef1.current.position.copy(camera.position);
+			cameraLightRef2.current.position.copy(camera.position);
+			cameraLightRef3.current.position.copy(camera.position);
+
+			// ライトをカメラの周りに少しずつずらして配置する
+			cameraLightRef2.current.position.add(new THREE.Vector3(50, 50, 50));
+			cameraLightRef3.current.position.add(new THREE.Vector3(-50, -50, -50));
+		}
+	});
+
+	return (
+		<>
+			<pointLight ref={cameraLightRef1} intensity={1} />
+			<pointLight ref={cameraLightRef2} intensity={0.5} />
+			<pointLight ref={cameraLightRef3} intensity={0.5} />
+		</>
+	);
+};
+
+function StepModel({ data, canvasRef, cameraRef, ...props }) {
 	const [obj, setObj] = useState(null);
+	const meshRef = useRef();
+
 	useEffect(() => {
 		async function load() {
 			const mainObject = await LoadStep(data);
@@ -41,7 +73,7 @@ function StepModel({ data, ...props }) {
 	}
 	return (
 		<group {...props}>
-			<mesh>
+			<mesh ref={meshRef}>
 				<primitive object={obj} />
 			</mesh>
 		</group>
@@ -181,23 +213,13 @@ function StepFileUpload(props) {
 						{previewStepUrl ? (
 							<Box>
 								<Box mb={1} height={580}>
-									<Canvas
-										shadows
-										raycaster={{ params: { Line: { threshold: 0.15 } } }}
-										camera={{ position: [-10, 10, 10], fov: 20 }}
-									>
-										<ambientLight intensity={0.2} />
-										<directionalLight position={[0, -50, 0]} />
-										<directionalLight
-											castShadow
-											position={[2.5, 5, 5]}
-											intensity={1.0}
-											shadow-mapSize={[1024, 1024]}
-										>
-											<orthographicCamera attach="shadow-camera" args={[-5, 5, 5, -5, 1, 50]} />
-										</directionalLight>
-										{/* <Ground /> */}
-										{isLoaded && <StepModel scale={[0.1, 0.1, 0.1]} data={file} />}
+									<Canvas camera={{ fov: 20, position: [0, 2, 5] }}>
+										<Bounds fit clip observe margin={1}>
+											{/* <ambientLight /> */}
+											{/* <pointLight position={[0, 30, 0]} /> */}
+											<CameraAndLight />
+											{isLoaded && <StepModel position={[0, 0, 0]} data={file} />}
+										</Bounds>
 										<OrbitControls dampingFactor={0.2} enableDamping={true} />
 									</Canvas>
 								</Box>

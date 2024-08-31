@@ -35,9 +35,10 @@ export async function LoadStep(data) {
 		let material = null;
 		if (resultMesh.color) {
 			const color = new THREE.Color(resultMesh.color[0], resultMesh.color[1], resultMesh.color[2]);
-			material = new THREE.MeshPhongMaterial({ color: color });
+			material = new THREE.MeshPhongMaterial({ color: 0x888888 });
+			// material = new THREE.MeshPhongMaterial({ color: color });
 		} else {
-			material = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+			material = new THREE.MeshPhongMaterial({ color: 0x888888 });
 		}
 
 		const mesh = new THREE.Mesh(geometry, material);

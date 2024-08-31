@@ -1,5 +1,5 @@
 ﻿# BOMS
-  BOM type Oder Management System 2023-2024 Keisuke Hatomi @Studio-Larmie
+  Bill of material Order Management System ©2023-2024 Studio-Larmie.
 
 # デプロイ先
   firebase
